@@ -23,6 +23,10 @@ const PENDU_SETTING = {
 
 */
 
+const toggleClass = () => {
+  letterContainer.classList.toggle("hiddenLetter");
+};
+
 const letterContainer = document.querySelector(".pendu-displayLetter-container");
 
 const test = document.querySelector(".hide-test");
@@ -31,9 +35,7 @@ test.addEventListener("click", (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  console.log("click");
-
-  letterContainer.classList.toggle("hiddenLetter");
+  toggleClass();
 });
 
 /*
@@ -83,7 +85,7 @@ const fetchPenduTxt = () => {
       // trigger the transform into array
       toArray(text);
     })
-    // then trigger the getWord
+    // then trigger the getWord for the very first time
     // as its async function can be declared after ( as const )
     .then(() => getWord(PENDU_SETTING.txtToArray));
 };
@@ -93,6 +95,7 @@ const fetchPenduTxt = () => {
 const getWord = (array) => {
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   PENDU_SETTING.hiddenWord = [];
+  //
   if (PENDU_SETTING.newGame === true) {
     // set PENDU_SETTING.newGame to false to prevent get a new word as long as preview game isnt finished
     PENDU_SETTING.newGame = false;
@@ -114,30 +117,29 @@ const getWord = (array) => {
 const checkForLetter = (letter) => {
   for (const letterIndex in PENDU_SETTING.newGameWord) {
     if (letter.toLowerCase() === PENDU_SETTING.newGameWord.toLowerCase().charAt(letterIndex)) {
-      //
-      console.log("trouvé", letter, "at index : ", letterIndex);
-      //
-      if (letterIndex === 0) {
+      // here === do not work !? 🤷‍♂️
+      if (letterIndex == 0) {
+        console.log("index 0");
         // set first letter un uppercase
         PENDU_SETTING.hiddenWord[letterIndex] = letter.toUpperCase();
-        sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
       } else {
         PENDU_SETTING.hiddenWord[letterIndex] = letter.toLowerCase();
-        sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
       }
+      // HTML DISPLAY
+      sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
     }
   }
 };
 
 const winConsCheck = () => {
   if (PENDU_SETTING.hiddenWord.includes("-") === true) {
-    PENDU_SETTING.lifeCount -= 1;
-
+    // LOST CONDITION AND ACTION
     if (PENDU_SETTING.lifeCount === 0) {
       console.log("PERDU");
       PENDU_SETTING.newGame = true;
       getWord(PENDU_SETTING.txtToArray);
     }
+    // WIN CONDITION AND ACTION
   } else {
     // no more "-" mean word found,
     // set newGame to true to restart the "getword"
@@ -158,6 +160,8 @@ const hangmanLogic = (letterFromInput) => {
 
 // =====================================================================================================================
 
+// toggleClass();
+
 body.addEventListener("keyup", (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -173,6 +177,7 @@ body.addEventListener("keyup", (e) => {
 
   // SEND TO HANGMANLOGIC THE LETTER IF ENTER & IF LETTER ISNT <empty.string>
   if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
+    toggleClass();
     hangmanLogic(PENDU_SETTING.selectedLetter);
     PENDU_SETTING.selectedLetter = "";
     sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
@@ -185,6 +190,7 @@ body.addEventListener("keyup", (e) => {
 
   // DELETED LETTER
   if (e.key == "Backspace") {
+    toggleClass();
     PENDU_SETTING.selectedLetter = "";
     sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
   }
