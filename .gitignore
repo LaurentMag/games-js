@@ -7,3 +7,5 @@ main.css.map
 *.css.map
 *.sass.map
 *.scss.map
+
+**/.DS_Store
