@@ -4,11 +4,13 @@
   height: 100vh;
 
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
 }
 
-.Pendu-container {
+// ====================================================================================
+.pendu-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -16,6 +18,7 @@
   position: relative;
 
   padding: 1rem;
+  width: min(50rem, 90%);
 
   color: white;
   background-color: rgb(92, 77, 94);
@@ -28,40 +31,30 @@
   .pendu-result {
     text-align: center;
 
-    width: 40rem;
-    padding: 5rem 4rem 3rem 4rem;
+    width: fit-content;
+    padding: 5rem 4rem 1rem 4rem;
 
     font-size: 4rem;
     // border: 1px solid black;
   }
   // ::::::::::::::::::::::
-  form {
-    padding-block-end: 1.5rem;
+}
 
-    width: 50%;
+// ====================================================================================
 
-    border-radius: 0.5rem;
+.pendu-displayLetter-container {
+  display: grid;
+  place-items: center;
 
-    display: flex;
-    flex-direction: column;
-    // align-items: center;
-    gap: 1rem;
+  font-size: 2rem;
+  font-weight: 900;
 
-    label {
-      padding-inline-start: 1rem;
-    }
+  width: 4rem;
+  height: 4rem;
 
-    // ::::::::::::::::::::::
-    input {
-      padding-block: 1rem;
+  border: 2px solid white;
+}
 
-      border-radius: 1rem;
-
-      font-size: 120%;
-      font-weight: 900;
-      text-transform: capitalize;
-
-      text-align: center;
-    }
-  }
+.hiddenLetter {
+  visibility: hidden;
 }

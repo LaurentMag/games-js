@@ -1,0 +1,77 @@
+form {
+  padding-block-end: 1.5rem;
+
+  width: 50%;
+
+  border-radius: 0.5rem;
+
+  display: flex;
+  flex-direction: column;
+  // align-items: center;
+  gap: 1rem;
+
+  label {
+    padding-inline-start: 1rem;
+  }
+
+  // ::::::::::::::::::::::
+  input {
+    padding-block: 1rem;
+
+    border: none;
+    border-radius: 1rem;
+
+    font-size: 140%;
+    font-weight: 900;
+    text-transform: capitalize;
+
+    text-align: center;
+
+    // allow to hide the cursor
+    caret-color: transparent;
+    color: #0c3454;
+
+    background-color: gray;
+
+    &:focus {
+      outline: 3px solid rgb(78, 108, 158);
+      background-color: rgb(217, 217, 217);
+    }
+  }
+}
+
+// ::::::::::::::::::::::
+button {
+  align-self: center;
+  width: 30%;
+
+  margin-block-start: 1rem;
+
+  // box-shadow: 1px 5px 10px 1px rgba(0, 0, 0, 0.373);
+  border: none;
+  border-radius: 0.5rem;
+
+  background-color: transparent;
+
+  &:active {
+    transform: translateY(1.3%) scale(0.99);
+
+    .bxs-check-circle {
+      filter: drop-shadow(4px 4px 2px rgba(0, 0, 0, 0.373));
+    }
+  }
+
+  .bxs-check-circle {
+    font-size: 5rem;
+    color: rgb(78, 108, 158);
+    // -webkit-filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow(5px 5px 5px rgba(0, 0, 0, 0.373));
+  }
+}
+
+.pendu-suggested-letter {
+  background-color: rgb(92, 77, 94);
+  border-radius: 1rem;
+
+  box-shadow: 10px 20px 15px rgba(0, 0, 0, 0.176), -10px 20px 15px rgba(0, 0, 0, 0.176);
+}
