@@ -6,7 +6,6 @@ const body = document.querySelector("body");
 
 const PENDU_SETTING = {
   oneOrTwoPlayer: 1,
-  newGame: true,
   lifeCount: 6,
   //
   selectedLetter: "",
@@ -51,7 +50,7 @@ const randomIndex = (array) => {
   return Math.floor(Math.random() * array.length);
 };
 
-const hideWord = (wordAsArray) => {
+const createHiddenWord = (wordAsArray) => {
   for (let i = 0; i < wordAsArray.length; i++) {
     PENDU_SETTING.hiddenWord.push("-");
   }
@@ -65,8 +64,19 @@ const sendSelectLetterToHtml = (letter) => {
   displaySelectedLetter.innerHTML = `${letter}`;
 };
 
+// RESET GAME AFTER A WIN OR LOSE
+const reset = () => {
+  PENDU_SETTING.lifeCount = 6;
+  // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
+  PENDU_SETTING.hiddenWord = [];
+  getWord(PENDU_SETTING.txtToArray);
+};
+
 // =====================================================================================================================
-// TRANSFORM FETCHED .TXT INTO ARRAY ---------------------
+// =====================================================================================================================
+// =====================================================================================================================
+// TRANSFORM FETCHED .TXT INTO ARRAY
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const toArray = (textParam) => {
   // set text into array
   // use regex to "split" with space (\s) coma (,) or next line (\n)
@@ -74,7 +84,8 @@ const toArray = (textParam) => {
   return (PENDU_SETTING.txtToArray = textParam.split(/[\s,\n]+/));
 };
 
-// FETCH .TXT ---------------------
+// FETCH .TXT
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const fetchPenduTxt = () => {
   // when consoleLog(response) got a basic "object", and as its a text need to use the method .text()
   // if console response.text() directly it send a promise with <state> pending
@@ -92,76 +103,76 @@ const fetchPenduTxt = () => {
 
 // get a random new word when new game
 // setup 1player
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const getWord = (array) => {
-  // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
-  PENDU_SETTING.hiddenWord = [];
-  //
-  if (PENDU_SETTING.newGame === true) {
-    // set PENDU_SETTING.newGame to false to prevent get a new word as long as preview game isnt finished
-    PENDU_SETTING.newGame = false;
-
-    if (PENDU_SETTING.oneOrTwoPlayer == 1) {
-      // select a random word from the .txt turned as array
-      PENDU_SETTING.newGameWord = array[randomIndex(array)];
-      // create the hidden word to be displayed in the html
-      hideWord(PENDU_SETTING.newGameWord);
-      // set the html display
-      sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
-    }
+  if (PENDU_SETTING.oneOrTwoPlayer == 1) {
+    // select a random word from the .txt turned as array
+    PENDU_SETTING.newGameWord = array[randomIndex(array)];
+    // create the hidden word to be displayed in the html
+    createHiddenWord(PENDU_SETTING.newGameWord);
+    // set the html display
+    sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
   }
 };
 
 // =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
 
 // check if "letter" belong to the PENDU_SETTING.newGameWord
-const checkForLetter = (letter) => {
-  for (const letterIndex in PENDU_SETTING.newGameWord) {
-    if (letter.toLowerCase() === PENDU_SETTING.newGameWord.toLowerCase().charAt(letterIndex)) {
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
+const checkForLetter = (letter, currentGameWord, hiddenWord) => {
+  for (const letterIndex in currentGameWord) {
+    if (letter.toLowerCase() === currentGameWord.toLowerCase().charAt(letterIndex)) {
       // here === do not work !? 🤷‍♂️
       if (letterIndex == 0) {
         console.log("index 0");
         // set first letter un uppercase
-        PENDU_SETTING.hiddenWord[letterIndex] = letter.toUpperCase();
+        hiddenWord[letterIndex] = letter.toUpperCase();
       } else {
-        PENDU_SETTING.hiddenWord[letterIndex] = letter.toLowerCase();
+        hiddenWord[letterIndex] = letter.toLowerCase();
       }
       // HTML DISPLAY
-      sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
+      sendHiddenWordToHtml(hiddenWord);
     }
   }
+  if (!hiddenWord.includes(letter)) {
+    PENDU_SETTING.lifeCount -= 1;
+  }
+
+  console.log(PENDU_SETTING.lifeCount);
 };
 
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const winConsCheck = () => {
-  if (PENDU_SETTING.hiddenWord.includes("-") === true) {
-    // LOST CONDITION AND ACTION
-    if (PENDU_SETTING.lifeCount === 0) {
-      console.log("PERDU");
-      PENDU_SETTING.newGame = true;
-      getWord(PENDU_SETTING.txtToArray);
-    }
-    // WIN CONDITION AND ACTION
-  } else {
+  // WIN CONDITION AND ACTION
+  if (PENDU_SETTING.hiddenWord.includes("-") === false) {
     // no more "-" mean word found,
-    // set newGame to true to restart the "getword"
     console.log(" VICTORY ");
-    PENDU_SETTING.newGame = true;
-    getWord(PENDU_SETTING.txtToArray);
+    reset();
+  }
+  // LOST CONDITION AND ACTION
+  if (PENDU_SETTING.lifeCount === 0) {
+    console.log("PERDU");
+    reset();
   }
 };
 
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const hangmanLogic = (letterFromInput) => {
   console.log("current word : ", PENDU_SETTING.newGameWord);
   console.log(letterFromInput);
   // check if the letter is in the selected word
-  checkForLetter(letterFromInput);
+  checkForLetter(letterFromInput, PENDU_SETTING.newGameWord, PENDU_SETTING.hiddenWord);
   // at each letter input check for the winCons / lose
   winConsCheck();
 };
 
 // =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
 
 // toggleClass();
-
 body.addEventListener("keyup", (e) => {
   e.preventDefault();
   e.stopPropagation();
