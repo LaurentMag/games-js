@@ -1,10 +1,16 @@
 "use strict";
 
+// HTML ELEMENTS
+
 const penduWord = document.querySelector(".pendu-result");
 const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 const body = document.querySelector("body");
 
+const penduResultContainer = document.querySelector(".pendu-result-container");
+
 const letterContainer = document.querySelector(".pendu-displayLetter-container");
+
+// =====================================================================================================================
 
 const PENDU_SETTING = {
   oneOrTwoPlayer: 1,
@@ -56,6 +62,38 @@ const reset = () => {
 };
 
 // =====================================================================================================================
+// ANIMATIONS
+
+const delay = 120;
+
+const animfadeOutFadeIn = () => {
+  letterContainer.classList.add("hiddenLetter");
+  setTimeout(() => {
+    letterContainer.classList.remove("hiddenLetter");
+  }, delay);
+};
+
+const animFadeOut = () => {
+  letterContainer.classList.add("hiddenLetter");
+};
+
+// =====================================================================================================================
+// CREATE ELEMENT
+
+const createLetterElem = (letterToDisplay, index) => {
+  const hiddenWordLetter = document.createElement("p");
+  penduResultContainer.append(hiddenWordLetter);
+  hiddenWordLetter.innerHTML = `${letterToDisplay}`;
+  hiddenWordLetter.className = `${index}`;
+};
+
+const createStuffTest = () => {
+  PENDU_SETTING.hiddenWord.map((letter, index) => {
+    createLetterElem(letter, index);
+  });
+};
+
+// =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
 // TRANSFORM FETCHED .TXT INTO ARRAY
@@ -93,6 +131,9 @@ const setupNewGame = (array) => {
     createHiddenWord(PENDU_SETTING.newGameWord);
     // set the html display
     sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
+
+    console.log(PENDU_SETTING.hiddenWord);
+    createStuffTest();
   }
 };
 
@@ -124,6 +165,8 @@ const checkForLetter = (letter, currentGameWord, hiddenWord) => {
   if (!hiddenWord.includes(letter)) {
     PENDU_SETTING.lifeCount -= 1;
   }
+
+  logInfo();
 };
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -143,8 +186,7 @@ const winConsCheck = () => {
 // =====================================================================================================================
 // =====================================================================================================================
 
-const hangmanLogic = (letterFromInput) => {
-  logInfo();
+const gameLogic = (letterFromInput) => {
   // check if the letter is in the selected word
   checkForLetter(letterFromInput, PENDU_SETTING.newGameWord, PENDU_SETTING.hiddenWord);
   // at each letter input check for the winCons / lose
@@ -154,17 +196,6 @@ const hangmanLogic = (letterFromInput) => {
 // =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
-
-const animfadeOutFadeIn = () => {
-  letterContainer.classList.add("hiddenLetter");
-  setTimeout(() => {
-    letterContainer.classList.remove("hiddenLetter");
-  }, 150);
-};
-
-const animFadeOut = () => {
-  letterContainer.classList.add("hiddenLetter");
-};
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
 body.addEventListener("keyup", (e) => {
@@ -184,13 +215,13 @@ body.addEventListener("keyup", (e) => {
     // add timeout to add letter to let anim run first
     setTimeout(() => {
       sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
-    }, 150);
+    }, delay);
   }
 
   // :::::::::::::::::::::::::::
   if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
-    hangmanLogic(PENDU_SETTING.selectedLetter);
+    gameLogic(PENDU_SETTING.selectedLetter);
     // reset letter & display after send
 
     animFadeOut();

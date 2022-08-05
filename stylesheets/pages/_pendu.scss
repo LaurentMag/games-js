@@ -42,6 +42,16 @@
 
 // ====================================================================================
 
+.pendu-result-container {
+  display: flex;
+  gap: 1rem;
+
+  font-size: 3.2rem;
+  font-weight: 600;
+}
+
+// ====================================================================================
+
 .pendu-displayLetter-container {
   display: grid;
   place-items: center;
@@ -58,7 +68,7 @@
   border: 2px solid white;
 
   opacity: 1;
-  transition: opacity 0.2s, transform 0.2s;
+  transition: opacity 0.15s, transform 0.15s;
 }
 
 .hiddenLetter {
