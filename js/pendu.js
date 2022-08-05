@@ -43,6 +43,13 @@ test.addEventListener("click", (e) => {
 
 */
 
+const logInfo = () => {
+  console.log("current word : ", PENDU_SETTING.newGameWord);
+  console.log(PENDU_SETTING.selectedLetter);
+  console.log(PENDU_SETTING.lifeCount);
+  console.log("-----------------------");
+};
+
 // =====================================================================================================================
 // UTILITIES
 // get a random index from an array
@@ -69,7 +76,8 @@ const reset = () => {
   PENDU_SETTING.lifeCount = 6;
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   PENDU_SETTING.hiddenWord = [];
-  getWord(PENDU_SETTING.txtToArray);
+  //
+  setupNewGame(PENDU_SETTING.txtToArray);
 };
 
 // =====================================================================================================================
@@ -92,22 +100,20 @@ const fetchPenduTxt = () => {
   // it mean it need another .then to process the received promise ( correct ?)
   fetch("./pendu-mots.txt")
     .then((response) => response.text())
-    .then((text) => {
-      // trigger the transform into array
-      toArray(text);
-    })
-    // then trigger the getWord for the very first time
+    // trigger the transform into array
+    .then((text) => toArray(text))
+    // then trigger the setupNewGame for the first time
     // as its async function can be declared after ( as const )
-    .then(() => getWord(PENDU_SETTING.txtToArray));
+    .then(() => setupNewGame(PENDU_SETTING.txtToArray));
 };
 
-// get a random new word when new game
-// setup 1player
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
-const getWord = (array) => {
+// array : array of word coming from the fetch
+const setupNewGame = (array) => {
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
-    PENDU_SETTING.newGameWord = array[randomIndex(array)];
+    // generate lowerCase word
+    PENDU_SETTING.newGameWord = array[randomIndex(array)].toLowerCase();
     // create the hidden word to be displayed in the html
     createHiddenWord(PENDU_SETTING.newGameWord);
     // set the html display
@@ -119,14 +125,18 @@ const getWord = (array) => {
 // =====================================================================================================================
 // =====================================================================================================================
 
-// check if "letter" belong to the PENDU_SETTING.newGameWord
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
+/**
+ * It checks if the letter is in the word, if it is, it replaces the underscore with the letter,
+ * if it's not, it decreases the life count
+ * @param letter - the letter that the user has entered
+ * @param currentGameWord - the word that the player is trying to guess
+ * @param hiddenWord - the word to be guessed, but with all the letters hidden.
+ */
 const checkForLetter = (letter, currentGameWord, hiddenWord) => {
   for (const letterIndex in currentGameWord) {
-    if (letter.toLowerCase() === currentGameWord.toLowerCase().charAt(letterIndex)) {
+    if (letter === currentGameWord.charAt(letterIndex)) {
       // here === do not work !? 🤷‍♂️
       if (letterIndex == 0) {
-        console.log("index 0");
         // set first letter un uppercase
         hiddenWord[letterIndex] = letter.toUpperCase();
       } else {
@@ -139,8 +149,6 @@ const checkForLetter = (letter, currentGameWord, hiddenWord) => {
   if (!hiddenWord.includes(letter)) {
     PENDU_SETTING.lifeCount -= 1;
   }
-
-  console.log(PENDU_SETTING.lifeCount);
 };
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -158,10 +166,12 @@ const winConsCheck = () => {
   }
 };
 
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
+// =====================================================================================================================
+// =====================================================================================================================
+// =====================================================================================================================
+
 const hangmanLogic = (letterFromInput) => {
-  console.log("current word : ", PENDU_SETTING.newGameWord);
-  console.log(letterFromInput);
+  logInfo();
   // check if the letter is in the selected word
   checkForLetter(letterFromInput, PENDU_SETTING.newGameWord, PENDU_SETTING.hiddenWord);
   // at each letter input check for the winCons / lose
@@ -179,34 +189,38 @@ body.addEventListener("keyup", (e) => {
 
   const regex = /[A-Za-z]/;
 
-  // check if the pressed key is a letter and
-  // only length of 1 ( otherwise can display "shift" / "command"... and other function keys)
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
+  //  EVERY KEY PRESS CHECK IF LETTER IF SO DISPLAY IN HTML
+  // only length of 1 ( otherwise can display "shift" / "command"... and other function keys as string)
   if (e.key.length === 1 && e.key.match(regex) !== null) {
-    PENDU_SETTING.selectedLetter = e.key;
+    PENDU_SETTING.selectedLetter = e.key.toLowerCase();
     sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
   }
 
-  // SEND TO HANGMANLOGIC THE LETTER IF ENTER & IF LETTER ISNT <empty.string>
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
   if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
-    toggleClass();
+    // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     hangmanLogic(PENDU_SETTING.selectedLetter);
+    // reset letter & display after send
     PENDU_SETTING.selectedLetter = "";
     sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
-
+    //
+    //
+  } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
     // SEND ERR MESS IF ENTER & LETTER IS <empty.string>
     // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send)
-  } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
     console.log("Type a Key");
   }
 
+  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
   // DELETED LETTER
   if (e.key == "Backspace") {
-    toggleClass();
+    // RESET AFTER "DELETE"
     PENDU_SETTING.selectedLetter = "";
     sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
   }
 });
 
 // =====================================================================================================================
-// trigger fetch at start ( this will trigger the getWord for the first game)
+// trigger fetch at start ( this will trigger the setupNewGame for the first game)
 fetchPenduTxt();
