@@ -1,0 +1,67 @@
+.body-pendu {
+  background-color: rgb(149, 143, 149);
+
+  height: 100vh;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Pendu-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  position: relative;
+
+  padding: 1rem;
+
+  color: white;
+  background-color: rgb(92, 77, 94);
+
+  border-radius: 1rem;
+
+  box-shadow: 10px 20px 15px rgba(0, 0, 0, 0.176), -10px 20px 15px rgba(0, 0, 0, 0.176);
+
+  // ::::::::::::::::::::::
+  .pendu-result {
+    text-align: center;
+
+    width: 40rem;
+    padding: 5rem 4rem 3rem 4rem;
+
+    font-size: 4rem;
+    // border: 1px solid black;
+  }
+  // ::::::::::::::::::::::
+  form {
+    padding-block-end: 1.5rem;
+
+    width: 50%;
+
+    border-radius: 0.5rem;
+
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    gap: 1rem;
+
+    label {
+      padding-inline-start: 1rem;
+    }
+
+    // ::::::::::::::::::::::
+    input {
+      padding-block: 1rem;
+
+      border-radius: 1rem;
+
+      font-size: 120%;
+      font-weight: 900;
+      text-transform: capitalize;
+
+      text-align: center;
+    }
+  }
+}
