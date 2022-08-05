@@ -4,6 +4,8 @@ const penduWord = document.querySelector(".pendu-result");
 const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 const body = document.querySelector("body");
 
+const letterContainer = document.querySelector(".pendu-displayLetter-container");
+
 const PENDU_SETTING = {
   oneOrTwoPlayer: 1,
   lifeCount: 6,
@@ -15,33 +17,6 @@ const PENDU_SETTING = {
   newGameWord: "",
   hiddenWord: [],
 };
-
-/*
-
-
-
-*/
-
-const toggleClass = () => {
-  letterContainer.classList.toggle("hiddenLetter");
-};
-
-const letterContainer = document.querySelector(".pendu-displayLetter-container");
-
-const test = document.querySelector(".hide-test");
-
-test.addEventListener("click", (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-
-  toggleClass();
-});
-
-/*
-
-
-
-*/
 
 const logInfo = () => {
   console.log("current word : ", PENDU_SETTING.newGameWord);
@@ -153,13 +128,11 @@ const checkForLetter = (letter, currentGameWord, hiddenWord) => {
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
 const winConsCheck = () => {
-  // WIN CONDITION AND ACTION
   if (PENDU_SETTING.hiddenWord.includes("-") === false) {
     // no more "-" mean word found,
     console.log(" VICTORY ");
     reset();
   }
-  // LOST CONDITION AND ACTION
   if (PENDU_SETTING.lifeCount === 0) {
     console.log("PERDU");
     reset();
@@ -182,42 +155,61 @@ const hangmanLogic = (letterFromInput) => {
 // =====================================================================================================================
 // =====================================================================================================================
 
-// toggleClass();
+const animfadeOutFadeIn = () => {
+  letterContainer.classList.add("hiddenLetter");
+  setTimeout(() => {
+    letterContainer.classList.remove("hiddenLetter");
+  }, 150);
+};
+
+const animFadeOut = () => {
+  letterContainer.classList.add("hiddenLetter");
+};
+
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 body.addEventListener("keyup", (e) => {
   e.preventDefault();
   e.stopPropagation();
 
   const regex = /[A-Za-z]/;
 
-  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
+  // :::::::::::::::::::::::::::
   //  EVERY KEY PRESS CHECK IF LETTER IF SO DISPLAY IN HTML
-  // only length of 1 ( otherwise can display "shift" / "command"... and other function keys as string)
+  // length of 1 = otherwise can display "shift" / "command"... and other function keys as string
   if (e.key.length === 1 && e.key.match(regex) !== null) {
+    animfadeOutFadeIn();
+
     PENDU_SETTING.selectedLetter = e.key.toLowerCase();
-    sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
+
+    // add timeout to add letter to let anim run first
+    setTimeout(() => {
+      sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
+    }, 150);
   }
 
-  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
+  // :::::::::::::::::::::::::::
   if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     hangmanLogic(PENDU_SETTING.selectedLetter);
     // reset letter & display after send
+
+    animFadeOut();
     PENDU_SETTING.selectedLetter = "";
-    sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
-    //
+
     //
   } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
     // SEND ERR MESS IF ENTER & LETTER IS <empty.string>
-    // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send)
+    // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send as letter is reset)
     console.log("Type a Key");
   }
 
-  // ::::::::::::::::::::::::::::::::::::::::::::::::::::
+  // :::::::::::::::::::::::::::
   // DELETED LETTER
   if (e.key == "Backspace") {
     // RESET AFTER "DELETE"
+
+    animFadeOut();
     PENDU_SETTING.selectedLetter = "";
-    sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
   }
 });
 

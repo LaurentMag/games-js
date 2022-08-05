@@ -53,9 +53,15 @@
   width: 4rem;
   height: 4rem;
 
+  margin-block: 1rem 2rem;
+
   border: 2px solid white;
+
+  opacity: 1;
+  transition: opacity 0.2s, transform 0.2s;
 }
 
 .hiddenLetter {
-  visibility: hidden;
+  opacity: 0;
+  transform: scale(0.8);
 }
