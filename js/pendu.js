@@ -38,14 +38,10 @@ const randomIndex = (array) => {
   return Math.floor(Math.random() * array.length);
 };
 
-const createHiddenWord = (wordAsArray) => {
+const createHiddenWordArray = (wordAsArray) => {
   for (let i = 0; i < wordAsArray.length; i++) {
     PENDU_SETTING.hiddenWord.push("-");
   }
-};
-
-const sendHiddenWordToHtml = (toDisplay) => {
-  penduWord.innerHTML = `${toDisplay.join(" ")}`;
 };
 
 const sendSelectLetterToHtml = (letter) => {
@@ -57,6 +53,8 @@ const reset = () => {
   PENDU_SETTING.lifeCount = 6;
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   PENDU_SETTING.hiddenWord = [];
+  // Clean html display from preview word
+  cleanHiddenWordHTML();
   //
   setupNewGame(PENDU_SETTING.txtToArray);
 };
@@ -78,19 +76,30 @@ const animFadeOut = () => {
 };
 
 // =====================================================================================================================
-// CREATE ELEMENT
+// CREATE / MANAGE RESULT ELEMENTS
 
 const createLetterElem = (letterToDisplay, index) => {
   const hiddenWordLetter = document.createElement("p");
   penduResultContainer.append(hiddenWordLetter);
   hiddenWordLetter.innerHTML = `${letterToDisplay}`;
-  hiddenWordLetter.className = `${index}`;
+  hiddenWordLetter.className = `hidden-letter-${index}`;
 };
 
-const createStuffTest = () => {
+const createHiddenWordHTML = () => {
   PENDU_SETTING.hiddenWord.map((letter, index) => {
     createLetterElem(letter, index);
   });
+};
+
+const cleanHiddenWordHTML = () => {
+  // get nodeList with elements with class starting by...
+  const previewLetters = document.querySelectorAll("[class^=hidden-letter-]");
+  previewLetters.forEach((element) => element.remove());
+};
+
+const changeHiddenWordLetter = (letterToChange, index) => {
+  const whereToChange = document.querySelector(`.hidden-letter-${index}`);
+  whereToChange.innerHTML = `${letterToChange}`;
 };
 
 // =====================================================================================================================
@@ -120,23 +129,6 @@ const fetchPenduTxt = () => {
     .then(() => setupNewGame(PENDU_SETTING.txtToArray));
 };
 
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
-// array : array of word coming from the fetch
-const setupNewGame = (array) => {
-  if (PENDU_SETTING.oneOrTwoPlayer == 1) {
-    // select a random word from the .txt turned as array
-    // generate lowerCase word
-    PENDU_SETTING.newGameWord = array[randomIndex(array)].toLowerCase();
-    // create the hidden word to be displayed in the html
-    createHiddenWord(PENDU_SETTING.newGameWord);
-    // set the html display
-    sendHiddenWordToHtml(PENDU_SETTING.hiddenWord);
-
-    console.log(PENDU_SETTING.hiddenWord);
-    createStuffTest();
-  }
-};
-
 // =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
@@ -159,7 +151,7 @@ const checkForLetter = (letter, currentGameWord, hiddenWord) => {
         hiddenWord[letterIndex] = letter.toLowerCase();
       }
       // HTML DISPLAY
-      sendHiddenWordToHtml(hiddenWord);
+      changeHiddenWordLetter(letter, letterIndex);
     }
   }
   if (!hiddenWord.includes(letter)) {
@@ -185,6 +177,21 @@ const winConsCheck = () => {
 // =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
+
+// array : array of word coming from the fetch
+const setupNewGame = (array) => {
+  if (PENDU_SETTING.oneOrTwoPlayer == 1) {
+    // select a random word from the .txt turned as array
+    // generate lowerCase word
+    PENDU_SETTING.newGameWord = array[randomIndex(array)].toLowerCase();
+    // create the hidden word to be displayed in the html
+    createHiddenWordArray(PENDU_SETTING.newGameWord);
+    // create html hiddenWord Display
+    createHiddenWordHTML();
+
+    console.log(PENDU_SETTING.hiddenWord);
+  }
+};
 
 const gameLogic = (letterFromInput) => {
   // check if the letter is in the selected word
