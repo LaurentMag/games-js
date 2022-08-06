@@ -1,22 +1,13 @@
 "use strict";
 
-import {
-  randomIndex,
-  createHiddenWordArray,
-  sendSelectLetterToHtml,
-  delay,
-  animfadeOutFadeIn,
-  animFadeOut,
-  createHiddenWordHTML,
-  cleanHiddenWordHTML,
-  changeHiddenWordLetter,
-} from "./pendu-tools.js";
-
 // HTML ELEMENTS
 
 const penduWord = document.querySelector(".pendu-result");
 const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 const body = document.querySelector("body");
+
+const penduResultContainer = document.querySelector(".pendu-result-container");
+const letterContainer = document.querySelector(".pendu-displayLetter-container");
 
 // =====================================================================================================================
 
@@ -37,6 +28,58 @@ const logInfo = () => {
   console.log(PENDU_SETTING.selectedLetter);
   console.log(PENDU_SETTING.lifeCount);
   console.log("-----------------------");
+};
+
+// =====================================================================================================================
+// UTILITIES
+const randomIndex = (array) => {
+  return Math.floor(Math.random() * array.length);
+};
+const createHiddenWordArray = (wordAsArray) => {
+  for (let i = 0; i < wordAsArray.length; i++) {
+    PENDU_SETTING.hiddenWord.push("-");
+  }
+};
+const sendSelectLetterToHtml = (letter) => {
+  displaySelectedLetter.innerHTML = `${letter}`;
+};
+
+// =====================================================================================================================
+// ANIMATIONS
+const delay = 120;
+
+const animfadeOutFadeIn = () => {
+  letterContainer.classList.add("hiddenLetter");
+  setTimeout(() => {
+    letterContainer.classList.remove("hiddenLetter");
+  }, delay);
+};
+
+const animFadeOut = () => {
+  letterContainer.classList.add("hiddenLetter");
+};
+
+// =====================================================================================================================
+// CREATE / MANAGE RESULT ELEMENTS
+const createLetterElem = (letterToDisplay, index) => {
+  const hiddenWordLetter = document.createElement("p");
+  penduResultContainer.append(hiddenWordLetter);
+  hiddenWordLetter.innerHTML = `${letterToDisplay}`;
+  hiddenWordLetter.className = `hidden-letter-${index}`;
+};
+const createHiddenWordHTML = () => {
+  PENDU_SETTING.hiddenWord.map((letter, index) => {
+    createLetterElem(letter, index);
+  });
+};
+const cleanHiddenWordHTML = () => {
+  // get nodeList with elements with class starting by...
+  const previewLetters = document.querySelectorAll("[class^=hidden-letter-]");
+  previewLetters.forEach((element) => element.remove());
+};
+const changeHiddenWordLetter = (letterToChange, index) => {
+  const whereToChange = document.querySelector(`.hidden-letter-${index}`);
+  whereToChange.innerHTML = `${letterToChange}`;
 };
 
 // =====================================================================================================================
@@ -65,7 +108,6 @@ const fetchPenduTxt = () => {
     .then(() => setupNewGame(PENDU_SETTING.txtToArray));
 };
 
-// =====================================================================================================================
 // =====================================================================================================================
 // =====================================================================================================================
 
