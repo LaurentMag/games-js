@@ -100,7 +100,7 @@ Poumon
 Puzzle
 Quartz
 Rapide
-Séisme
+Seisme
 Tetine
 Tomate
 Walabi
@@ -137,7 +137,7 @@ Mondial
 Notable
 Oxygene
 Panique
-Pétrole
+Petrole
 Poterie
 Pouvoir
 Renégat

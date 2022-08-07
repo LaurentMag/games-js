@@ -52,6 +52,10 @@
 
   text-shadow: 10px 15px 15px rgba(0, 0, 0, 0.176);
 }
+[class^="hidden-letter-"] {
+  opacity: 1;
+  transition: opacity 0.15s, transform 0.15s;
+}
 
 // ====================================================================================
 

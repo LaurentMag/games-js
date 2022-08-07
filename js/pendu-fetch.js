@@ -7,11 +7,11 @@ import {PENDU_SETTING, setupNewGame} from "./pendu.js";
  * @param textParam - The text to be converted to an array.
  * @returns the array
  */
-const toArray = (textParam) => {
+const toArray = (txtFetched) => {
   // set text into array
   // use regex to "split" with space (\s) coma (,) or next line (\n)
   // + mean : eventualy several
-  return (PENDU_SETTING.txtToArray = textParam.split(/[\s,\n]+/));
+  return (PENDU_SETTING.txtToArray = txtFetched.split(/[\s,\n]+/));
 };
 
 /**
@@ -26,6 +26,7 @@ export const fetchPenduTxt = () => {
   fetch("./pendu-mots.txt")
     .then((response) => response.text())
     // trigger the transform into array
+    // use regex to "split" with space (\s) coma (,) or next line (\n) + mean : eventualy several
     .then((text) => toArray(text))
     // then trigger the setupNewGame for the first time
     // as its async function can be declared after ( as const )

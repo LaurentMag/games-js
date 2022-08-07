@@ -8,8 +8,11 @@ const penduWord = document.querySelector(".pendu-result");
 const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 const body = document.querySelector("body");
 
-const penduResultContainer = document.querySelector(".pendu-result-container");
-const letterContainer = document.querySelector(".pendu-displayLetter-container");
+const hiddenWordDisplayContainer = document.querySelector(".pendu-result-container");
+
+let hiddenWordLetterList = [];
+
+const typedLetterContainer = document.querySelector(".pendu-displayLetter-container");
 
 // =====================================================================================================================
 // animation delay (used for selected letter -for now-)
@@ -17,7 +20,6 @@ const delay = 120;
 
 export const PENDU_SETTING = {
   defaultLifeCount: 6,
-  // fetched txt as array
   txtToArray: [],
   //
   oneOrTwoPlayer: 1,
@@ -64,20 +66,6 @@ const sendSelectLetterToHtml = (letter) => {
 };
 
 // =====================================================================================================================
-// ANIMATIONS
-
-const animfadeOutFadeIn = () => {
-  letterContainer.classList.add("hiddenLetter");
-  setTimeout(() => {
-    letterContainer.classList.remove("hiddenLetter");
-  }, delay);
-};
-
-const animFadeOut = () => {
-  letterContainer.classList.add("hiddenLetter");
-};
-
-// =====================================================================================================================
 // CREATE / MANAGE RESULT ELEMENTS
 
 /**
@@ -87,16 +75,14 @@ const animFadeOut = () => {
  */
 const createLetterElem = (letterToDisplay, index) => {
   const hiddenWordLetter = document.createElement("p");
-  penduResultContainer.append(hiddenWordLetter);
+  hiddenWordDisplayContainer.append(hiddenWordLetter);
   hiddenWordLetter.innerHTML = `${letterToDisplay}`;
   // use array index to number letter class, will be used to know which letter need to be replaced
   hiddenWordLetter.className = `hidden-letter-${index}`;
 };
 
 /**
- * Map through the hiddenWord array.
- *
- * Create a paragraph per letter
+ * Map through the hiddenWord array.  Create a paragraph per letter
  */
 const createHiddenWordHTML = () => {
   PENDU_SETTING.hiddenWord.map((letter, index) => {
@@ -116,21 +102,37 @@ const cleanHiddenWordHTML = () => {
   }
 };
 
-/**
- * Change a designated <p> innerHtml according to an array index,
- *
- * by selecting the element by his class
- * @param letterToChange - the letter that will be changed in the hidden word
- * @param index - the index of the letter in the word that is being guessed
- */
-const changeHiddenWordLetter = (letterToChange, index) => {
-  const whereToChange = document.querySelector(`.hidden-letter-${index}`);
+// =====================================================================================================================
+// ANIMATIONS
 
-  whereToChange.innerHTML = `${letterToChange}`;
+const animfadeOutFadeIn = (classToSwitch, element) => {
+  if (!element.classList.contains(classToSwitch)) {
+    element.classList.add(classToSwitch);
+  }
+  setTimeout(() => {
+    element.classList.remove(classToSwitch);
+  }, delay);
+};
+
+const animFadeOut = (classToAdd, element) => {
+  element.classList.add(classToAdd);
 };
 
 // =====================================================================================================================
 // =====================================================================================================================
+
+/**
+ * Invoke animfadeOutFadeIn() & change letter
+ * @param letter - the letter that needs to be changed
+ * @param index - the index of the hiddenWord letter nodeList where to operate the change
+ */
+const animAndChangeHiddenWordLetter = (letter, index) => {
+  // get selected the letter that need to be changed via nodeList[] & index
+  animfadeOutFadeIn("hiddenLetter", hiddenWordLetterList[index]);
+  setTimeout(() => {
+    hiddenWordLetterList[index].innerHTML = `${letter}`;
+  }, delay + 50);
+};
 
 /**
  * Checks if the letter is part of the word to guess,
@@ -142,26 +144,30 @@ const changeHiddenWordLetter = (letterToChange, index) => {
  */
 const checkForLetter = (letter, wordToGuess, hiddenWord) => {
   for (const letterIndex in wordToGuess) {
+    // check if the letter is in the wordToGuess
     if (letter === wordToGuess.charAt(letterIndex)) {
-      // HTML DISPLAY - letter & index as parameters
-      changeHiddenWordLetter(letter, letterIndex);
-      // also update the array ( use for win / lose check ) as the display is independant
-      PENDU_SETTING.hiddenWord[letterIndex] = letter;
+      // check if letter slot is empty ( if not the letter already was added )
+      if (PENDU_SETTING.hiddenWord[letterIndex] === "_") {
+        // HTML DISPLAY
+        animAndChangeHiddenWordLetter(letter, letterIndex);
+        // also update the array ( use for win / lose / lose point check ) as the display is independant
+        PENDU_SETTING.hiddenWord[letterIndex] = letter;
+      }
     }
   }
+  // after the loop, if the proposed letter isnt in the hiddenWord it mean its a wrong proposal, therefore lose a life
   if (!hiddenWord.includes(letter)) {
     PENDU_SETTING.duringGameLife -= 1;
   }
   // DEBUG
   logInfo();
-  console.log(PENDU_SETTING.hiddenWord);
 };
 
 // =====================================================================================================================
 // =====================================================================================================================
 // GAME LOGIC
 
-// new game invoked after first fetch, and after a win or lose
+// NEW GAME invoked after first fetch, and after a win or lose
 /**
  * function to set / restart a new hangman game
  * - reset life count to default
@@ -178,7 +184,9 @@ export const setupNewGame = () => {
   PENDU_SETTING.duringGameLife = PENDU_SETTING.defaultLifeCount;
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   PENDU_SETTING.hiddenWord = [];
+
   // Clean html display from preview word if needed
+
   cleanHiddenWordHTML();
 
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
@@ -189,7 +197,31 @@ export const setupNewGame = () => {
     createHiddenWordArray(PENDU_SETTING.newGameWord);
     // create html hiddenWord Display
     createHiddenWordHTML();
+    // get the hidden world letter nodelist after html creation
+    hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
   }
+};
+// ::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+/**
+ * allow to fade out  hiddenWord display  letter per letter
+ */
+const HideLetterPerLetter = () => {
+  // get the amount of letter
+  let i = hiddenWordLetterList.length - 1;
+  const letterFadeLoop = () => {
+    // it will stop the "loop" once it reach the first letter
+    if (i >= 0) {
+      animFadeOut("hiddenLetter", hiddenWordLetterList[i]);
+      i--;
+      // set a timeout to add a delay to restart the "loop" once the above code is done
+      setTimeout(letterFadeLoop, 100);
+    }
+  };
+  // start the loop there.
+  setTimeout(() => {
+    letterFadeLoop();
+  }, 1000);
 };
 
 // ::::::::::::::::::::::::::::::::::::::::::::::::::::
@@ -199,11 +231,13 @@ const winConsCheck = () => {
     // no more "-" mean word found,
     console.log(" VICTORY ");
 
-    setTimeout(() => {
-      setupNewGame();
-    }, 1000);
+    HideLetterPerLetter();
+
+    // setTimeout(() => {
+    //   setupNewGame();
+    // }, 1000);
   }
-  if (PENDU_SETTING.lifeCount === 0) {
+  if (PENDU_SETTING.duringGameLife === 0) {
     console.log("PERDU");
 
     setTimeout(() => {
@@ -241,7 +275,7 @@ function manageInput(e) {
   //
   // length of 1 = otherwise can display "shift" / "command"... and other function keys as string
   if (e.key.length === 1 && e.key.match(regex) !== null) {
-    animfadeOutFadeIn();
+    animfadeOutFadeIn("hiddenLetter", typedLetterContainer);
 
     PENDU_SETTING.selectedLetter = e.key.toUpperCase();
     // add timeout to add letter for fadeOut anim part to run first
@@ -255,7 +289,7 @@ function manageInput(e) {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     gameLogic(PENDU_SETTING.selectedLetter);
     // reset letter after "enter"
-    animFadeOut();
+    animFadeOut("hiddenLetter", typedLetterContainer);
     PENDU_SETTING.selectedLetter = "";
     //
   } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
@@ -267,7 +301,7 @@ function manageInput(e) {
   // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    animFadeOut();
+    animFadeOut("hiddenLetter", typedLetterContainer);
     PENDU_SETTING.selectedLetter = "";
   }
 }
