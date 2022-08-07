@@ -2,20 +2,94 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
 
-    <title>New Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <meta property="og:title" content="">
+    <meta property="og:type" content="">
+    <meta property="og:url" content="">
+    <meta property="og:image" content="">
+
+    <meta name="theme-color" content="#fafafa">
+
+    <link rel="manifest" href="site.webmanifest">
+    <link rel="apple-touch-icon" href="icon.png"> -->
+    <!-- Place favicon.ico in the root directory -->
+
+    <title>GhostWord 😵</title>
     <meta name="description" content="">
 
     <link rel="stylesheet" href="stylesheets/main.css">
+    <link href='https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css' rel='stylesheet'>
 
-    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+
+    <script defer type="module" src="./js/pendu.js"></script>
+    <script defer type="module" src="./js/pendu-fetch.js"></script>
+    <!-- defer : attend que toute la page html soit chargé = utilise ça quand on sait qu'on a un script et qui doit 
+    être chargé en tout dernier -->
+
 </head>
 
-<body>
+<body class="body-pendu">
+
+    <section class="pendu-container">
+
+        <!-- LIFE COUNT -->
+        <div class="life-main--container">
+            <p class="life-title">Fantôme(s) restant :</p>
+            <div class="life-count--container"></div>
+        </div>
+
+        <!-- HIDDEN WORLD DiSPLAY -->
+        <div class="pendu-result-container">
+        </div>
+
+        <!-- LETTER PROPOSAL -->
+        <div class="pendu-displayLetter-container hiddenLetter">
+            <p class="pendu-displayLetter">
+                _
+            </p>
+        </div>
+
+        <!-- <form class="form-pendu">
+            <label for="penduLetterId">Lettre :</label>
+            <input type="text" step=" 1" name="penduLetter" id="penduLetterId" maxlength="1" autocomplete="off">
+            <button>
+                <i class='bx bxs-check-circle'></i>
+            </button>
+        </form> -->
+
+
+
+    </section>
+
+    <!-- <section class="pendu-suggested-letter">
+
+        content
+
+
+    </section> -->
+
+
+
+    <!-- 
+    <i class='bx bx-game'></i>
+   
+    <i class='bx bx-ghost'></i>
+ 
+    <i class='bx bxs-ghost'></i>
+
+
+    <i class='bx bx-smile'></i>
+    <i class='bx bx-angry'></i>
+    <i class='bx bx-shocked'></i>
+    <i class='bx bx-meh-blank'></i>
+    <i class='bx bx-dizzy'></i>
+    <i class='bx bx-tired'></i> -->
+
+
+
 
 </body>
 
