@@ -144,8 +144,8 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
   for (const letterIndex in wordToGuess) {
     if (letter === wordToGuess.charAt(letterIndex)) {
       // HTML DISPLAY - letter & index as parameters
-      changeHiddenWordLetter(letter.toUpperCase(), letterIndex);
-      // update the array as the display is now independant
+      changeHiddenWordLetter(letter, letterIndex);
+      // also update the array ( use for win / lose check ) as the display is independant
       PENDU_SETTING.hiddenWord[letterIndex] = letter;
     }
   }
@@ -184,7 +184,7 @@ export const setupNewGame = () => {
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
     // generate lowerCase word
-    PENDU_SETTING.newGameWord = wordListArray[randomIndex(wordListArray)].toLowerCase();
+    PENDU_SETTING.newGameWord = wordListArray[randomIndex(wordListArray)].toUpperCase();
     // create the hidden word to be displayed in the html
     createHiddenWordArray(PENDU_SETTING.newGameWord);
     // create html hiddenWord Display
@@ -243,7 +243,7 @@ function manageInput(e) {
   if (e.key.length === 1 && e.key.match(regex) !== null) {
     animfadeOutFadeIn();
 
-    PENDU_SETTING.selectedLetter = e.key.toLowerCase();
+    PENDU_SETTING.selectedLetter = e.key.toUpperCase();
     // add timeout to add letter for fadeOut anim part to run first
     setTimeout(() => {
       sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
