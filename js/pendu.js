@@ -178,10 +178,10 @@ export const setupNewGame = () => {
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
     PENDU_SETTING.newGameWord = PENDU_SETTING.txtToArray[randomIndex(PENDU_SETTING.txtToArray)].toUpperCase();
-    // create the hidden word to be displayed in the html
-    createHiddenWordArray(PENDU_SETTING.newGameWord);
   }
 
+  // create the hidden word to be displayed in the html
+  createHiddenWordArray(PENDU_SETTING.newGameWord);
   createHiddenWordHTML();
   // get the hidden world letter nodelist after html creation
   hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
@@ -192,7 +192,7 @@ export const setupNewGame = () => {
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
   if (PENDU_SETTING.hiddenWord.includes("_") === false || PENDU_SETTING.duringGameLife === 0) {
-    // wait a second to start to hide the word & another second to start another game
+    // wait a second to start hide the word & another second to start another game
     setTimeout(() => {
       intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
     }, 1000);

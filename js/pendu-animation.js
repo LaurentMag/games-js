@@ -55,8 +55,8 @@ export const animAndChangeHiddenWordLetter = (letter, index, nodelist) => {
 
 /**
  * Interval loops through the selected NodeList array.
- * Calls the animAddClass function on each letter. When it reach the lastest letter, it clears the interval and starts a
- * new game
+ * Calls the animAddClass function on each letter to hide the display, once it reach the first letter, clears interval.
+ *  And starts a new game
  * @param nodelist - the list of letters to hide
  */
 export const intervalHideLettersAndNewGame = (nodelist) => {
@@ -78,8 +78,8 @@ export const intervalHideLettersAndNewGame = (nodelist) => {
 
 // ___________________________________________________________________
 /**
- * Interval loops through the hiddenWordLetterList array.
- * Allow to display letter one by one, once the hideLetterArray is created
+ * Interval loops through a nodeList "array".
+ * Show letter one by one starting from the first one
  */
 export const intervalShowLetters = (nodelist) => {
   let i = 0;
