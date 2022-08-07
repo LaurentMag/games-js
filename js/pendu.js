@@ -78,7 +78,7 @@ const createLetterElem = (letterToDisplay, index) => {
   hiddenWordDisplayContainer.append(hiddenWordLetter);
   hiddenWordLetter.innerHTML = `${letterToDisplay}`;
   // use array index to number letter class, will be used to know which letter need to be replaced
-  hiddenWordLetter.className = `hidden-letter-${index}`;
+  hiddenWordLetter.className = `hidden-letter-${index} hiddenLetter`;
 };
 
 /**
@@ -114,8 +114,59 @@ const animfadeOutFadeIn = (classToSwitch, element) => {
   }, delay);
 };
 
-const animFadeOut = (classToAdd, element) => {
+/**
+ * Remove a class from an element.
+ * @param classToAdd - The class that will be removed from the element.
+ * @param element - The element that you want to remove the class from.
+ */
+const animRemoveClass = (classToAdd, element) => {
+  element.classList.remove(classToAdd);
+};
+/**
+ * Add a class to an element.
+ * @param classToAdd - The class that will be added to the element.
+ * @param element - The element that you want to add the class to.
+ */
+const animAddClass = (classToAdd, element) => {
   element.classList.add(classToAdd);
+};
+
+/**
+ * Interval loops through the hiddenWordLetterList array.
+ * Calls the animFadeOut function on each letter. When it reaches the last letter, it clears the interval and starts a
+ * new game
+ */
+const intervalHideLetters = () => {
+  let i = hiddenWordLetterList.length - 1;
+  const animInterval = setInterval(() => {
+    animAddClass("hiddenLetter", hiddenWordLetterList[i]);
+    // check when i == 0 ( reached the first letter ) to stop the interval with clearInterval..
+    if (i == 0) {
+      clearInterval(animInterval);
+
+      // set the time out to restart a new game after the clearInterval ( as it mean all animations are done)
+      setTimeout(() => {
+        setupNewGame();
+      }, 200);
+    }
+    i--;
+  }, 100);
+};
+
+/**
+ * Interval loops through the hiddenWordLetterList array.
+ * Allow to display letter one by one, once the hideLetterArray is created
+ */
+const intervalShowLetters = () => {
+  let i = 0;
+  const animInterval = setInterval(() => {
+    animRemoveClass("hiddenLetter", hiddenWordLetterList[i]);
+    // check when i == 0 ( reached the first letter ) to stop the interval with clearInterval..
+    if (i === hiddenWordLetterList.length - 1) {
+      clearInterval(animInterval);
+    }
+    i++;
+  }, 100);
 };
 
 // =====================================================================================================================
@@ -197,51 +248,30 @@ export const setupNewGame = () => {
     createHiddenWordArray(PENDU_SETTING.newGameWord);
     // create html hiddenWord Display
     createHiddenWordHTML();
+    // remove hiddenletter class to show letters one by one
+    intervalShowLetters();
     // get the hidden world letter nodelist after html creation
     hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
   }
 };
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 
-/**
- * allow to fade out  hiddenWord display  letter per letter
- */
-const HideLetterPerLetter = () => {
-  // get the amount of letter
-  let i = hiddenWordLetterList.length - 1;
-  const letterFadeLoop = () => {
-    // it will stop the "loop" once it reach the first letter
-    if (i >= 0) {
-      animFadeOut("hiddenLetter", hiddenWordLetterList[i]);
-      i--;
-      // set a timeout to add a delay to restart the "loop" once the above code is done
-      setTimeout(letterFadeLoop, 100);
-    }
-  };
-  // start the loop there.
-  setTimeout(() => {
-    letterFadeLoop();
-  }, 1000);
-};
-
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
   if (PENDU_SETTING.hiddenWord.includes("_") === false) {
     // no more "-" mean word found,
     console.log(" VICTORY ");
 
-    HideLetterPerLetter();
-
-    // setTimeout(() => {
-    //   setupNewGame();
-    // }, 1000);
+    // wait a second to start to hide the word & another second to start another game
+    setTimeout(() => {
+      intervalHideLetters();
+    }, 1000);
   }
   if (PENDU_SETTING.duringGameLife === 0) {
     console.log("PERDU");
 
+    // wait a second to start to hide the word
     setTimeout(() => {
-      setupNewGame();
+      intervalHideLetters();
     }, 1000);
   }
 };
@@ -289,7 +319,7 @@ function manageInput(e) {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     gameLogic(PENDU_SETTING.selectedLetter);
     // reset letter after "enter"
-    animFadeOut("hiddenLetter", typedLetterContainer);
+    animAddClass("hiddenLetter", typedLetterContainer);
     PENDU_SETTING.selectedLetter = "";
     //
   } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
@@ -301,7 +331,7 @@ function manageInput(e) {
   // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    animFadeOut("hiddenLetter", typedLetterContainer);
+    animAddClass("hiddenLetter", typedLetterContainer);
     PENDU_SETTING.selectedLetter = "";
   }
 }

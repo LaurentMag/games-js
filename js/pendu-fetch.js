@@ -53,3 +53,22 @@ const upperOrLowerCase = (index, indexToUpper, letter) => {
   }
   return returnedLetter;
 };
+
+// LOOP VERSION WITH SET_TIMEOUT
+const HideLetterPerLetter = () => {
+  // get the amount of letter
+  let i = hiddenWordLetterList.length - 1;
+  const letterFadeLoop = () => {
+    // it will stop the "loop" once it reach the first letter
+    if (i >= 0) {
+      animFadeOut("hiddenLetter", hiddenWordLetterList[i]);
+      i--;
+      // set a timeout to add a delay to restart the "loop" once the above code is done
+      setTimeout(letterFadeLoop, 100);
+    }
+  };
+  // start the loop there.
+  setTimeout(() => {
+    letterFadeLoop();
+  }, 1000);
+};
