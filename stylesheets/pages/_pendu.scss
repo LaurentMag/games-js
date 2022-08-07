@@ -11,6 +11,8 @@
 }
 
 // ====================================================================================
+// GENERAL CONTAINER
+
 .pendu-container {
   display: flex;
   flex-direction: column;
@@ -19,7 +21,7 @@
   position: relative;
 
   // padding: 1rem;
-  // width: min(50rem, 90%);
+  width: min(55rem, 90%);
   // border-radius: 1rem;
   // background-color: rgb(92, 77, 94);
   // box-shadow: 10px 20px 15px rgba(0, 0, 0, 0.176), -10px 20px 15px rgba(0, 0, 0, 0.176);
@@ -40,11 +42,51 @@
 }
 
 // ====================================================================================
+// LIFE COUNT
+
+.life-main--container {
+  width: 20rem;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.life-title {
+  margin-block: 1rem;
+  font-size: 1.4rem;
+  font-weight: 800;
+
+  align-self: start;
+}
+
+.life-count--container {
+  margin-block-end: 5rem;
+  padding: 1rem;
+
+  height: 5rem;
+
+  display: flex;
+  // flex-wrap: wrap;
+  // justify-content: center;
+  gap: 1rem;
+}
+
+.bx {
+  font-size: 3rem;
+  text-shadow: 5px 10px 5px rgba(0, 0, 0, 0.176);
+  opacity: 1;
+  transition: opacity 0.15s, transform 0.15s;
+}
+
+// ====================================================================================
+// HIDDEN WORD DISPLAY
 
 .pendu-result-container {
   display: flex;
   gap: 1.4rem;
 
+  margin-block: 3rem;
   // padding: 5rem 4rem 1rem 4rem;
 
   font-size: 3.2rem;
@@ -58,6 +100,7 @@
 }
 
 // ====================================================================================
+// LETTER PROPOSAL DISPLAY
 
 .pendu-displayLetter-container {
   display: grid;
@@ -70,7 +113,7 @@
   width: 4rem;
   height: 4rem;
 
-  margin-block: 5rem 2rem;
+  margin-block: 2rem;
 
   border: 2px solid white;
   box-shadow: 10px 15px 15px rgba(0, 0, 0, 0.095);

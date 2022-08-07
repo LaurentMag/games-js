@@ -1,22 +1,30 @@
 "use strict";
 
 import {fetchPenduTxt} from "./pendu-fetch.js";
+import {
+  animAddClass,
+  animfadeOutFadeIn,
+  animAndChangeHiddenWordLetter,
+  intervalHideLettersAndNewGame,
+  intervalShowLetters,
+} from "./pendu-animation.js";
 
 // HTML ELEMENTS
 
-const penduWord = document.querySelector(".pendu-result");
-const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 const body = document.querySelector("body");
+const lifeCountContainer = document.querySelector(".life-count--container");
+const displaySelectedLetter = document.querySelector(".pendu-displayLetter");
 
 const hiddenWordDisplayContainer = document.querySelector(".pendu-result-container");
 
 let hiddenWordLetterList = [];
+let lifeElementList = [];
 
 const typedLetterContainer = document.querySelector(".pendu-displayLetter-container");
 
 // =====================================================================================================================
 // animation delay (used for selected letter -for now-)
-const delay = 120;
+export const delay = 120;
 
 export const PENDU_SETTING = {
   defaultLifeCount: 6,
@@ -31,8 +39,8 @@ export const PENDU_SETTING = {
 
 const logInfo = () => {
   console.log("current word : ", PENDU_SETTING.newGameWord);
-  console.log(PENDU_SETTING.selectedLetter);
-  console.log(PENDU_SETTING.duringGameLife);
+  console.log("Letter sent : ", PENDU_SETTING.selectedLetter);
+  console.log("life count : ", PENDU_SETTING.duringGameLife);
   console.log("-----------------------");
 };
 
@@ -69,16 +77,17 @@ const sendSelectLetterToHtml = (letter) => {
 // CREATE / MANAGE RESULT ELEMENTS
 
 /**
- * Generate a paragraph>, append it, and assign a class
- * @param letterToDisplay - which letter will be displayed in the created <p>
- * @param index - Array index used to number indiviual <p>, for unique class name
+ * Generate a paragraph, append it to selected parent, and add class
+ * @param letterToDisplay - the letter to display
+ * @param whereToAppend - the parent element where to append the p created
+ * @param classNameParam -  p class
  */
-const createLetterElem = (letterToDisplay, index) => {
-  const hiddenWordLetter = document.createElement("p");
-  hiddenWordDisplayContainer.append(hiddenWordLetter);
-  hiddenWordLetter.innerHTML = `${letterToDisplay}`;
+const createLetterElem = (letterToDisplay, whereToAppend, classNameParam) => {
+  const pToCreate = document.createElement("p");
+  whereToAppend.append(pToCreate);
+  pToCreate.innerHTML = `${letterToDisplay}`;
   // use array index to number letter class, will be used to know which letter need to be replaced
-  hiddenWordLetter.className = `hidden-letter-${index} hiddenLetter`;
+  pToCreate.className = classNameParam;
 };
 
 /**
@@ -86,104 +95,31 @@ const createLetterElem = (letterToDisplay, index) => {
  */
 const createHiddenWordHTML = () => {
   PENDU_SETTING.hiddenWord.map((letter, index) => {
-    createLetterElem(letter, index);
+    createLetterElem(letter, hiddenWordDisplayContainer, `hidden-letter-${index} hiddenLetter`);
   });
+};
+
+const createLifeCountDisplay = () => {
+  for (let i = 0; i < PENDU_SETTING.defaultLifeCount; i++) {
+    createLetterElem("", lifeCountContainer, `bx bx-ghost life-${i}`);
+  }
 };
 
 /**
  * Clear HTML display from the hiddenWord, Invidual p for each letter,
  */
-const cleanHiddenWordHTML = () => {
-  // get nodeList with elements with class starting by...
-  const lettersNodeList = document.querySelectorAll("[class^=hidden-letter-]");
+const cleanHTMLDisplay = (nodelist) => {
   // if the nodeList isnt empty there is something to delete
-  if (lettersNodeList.length !== 0) {
-    lettersNodeList.forEach((element) => element.remove());
+  if (nodelist.length !== 0) {
+    nodelist.forEach((element) => element.remove());
   }
 };
 
 // =====================================================================================================================
 // ANIMATIONS
 
-const animfadeOutFadeIn = (classToSwitch, element) => {
-  if (!element.classList.contains(classToSwitch)) {
-    element.classList.add(classToSwitch);
-  }
-  setTimeout(() => {
-    element.classList.remove(classToSwitch);
-  }, delay);
-};
-
-/**
- * Remove a class from an element.
- * @param classToAdd - The class that will be removed from the element.
- * @param element - The element that you want to remove the class from.
- */
-const animRemoveClass = (classToAdd, element) => {
-  element.classList.remove(classToAdd);
-};
-/**
- * Add a class to an element.
- * @param classToAdd - The class that will be added to the element.
- * @param element - The element that you want to add the class to.
- */
-const animAddClass = (classToAdd, element) => {
-  element.classList.add(classToAdd);
-};
-
-/**
- * Interval loops through the hiddenWordLetterList array.
- * Calls the animFadeOut function on each letter. When it reaches the last letter, it clears the interval and starts a
- * new game
- */
-const intervalHideLetters = () => {
-  let i = hiddenWordLetterList.length - 1;
-  const animInterval = setInterval(() => {
-    animAddClass("hiddenLetter", hiddenWordLetterList[i]);
-    // check when i == 0 ( reached the first letter ) to stop the interval with clearInterval..
-    if (i == 0) {
-      clearInterval(animInterval);
-
-      // set the time out to restart a new game after the clearInterval ( as it mean all animations are done)
-      setTimeout(() => {
-        setupNewGame();
-      }, 200);
-    }
-    i--;
-  }, 100);
-};
-
-/**
- * Interval loops through the hiddenWordLetterList array.
- * Allow to display letter one by one, once the hideLetterArray is created
- */
-const intervalShowLetters = () => {
-  let i = 0;
-  const animInterval = setInterval(() => {
-    animRemoveClass("hiddenLetter", hiddenWordLetterList[i]);
-    // check when i == 0 ( reached the first letter ) to stop the interval with clearInterval..
-    if (i === hiddenWordLetterList.length - 1) {
-      clearInterval(animInterval);
-    }
-    i++;
-  }, 100);
-};
-
 // =====================================================================================================================
 // =====================================================================================================================
-
-/**
- * Invoke animfadeOutFadeIn() & change letter
- * @param letter - the letter that needs to be changed
- * @param index - the index of the hiddenWord letter nodeList where to operate the change
- */
-const animAndChangeHiddenWordLetter = (letter, index) => {
-  // get selected the letter that need to be changed via nodeList[] & index
-  animfadeOutFadeIn("hiddenLetter", hiddenWordLetterList[index]);
-  setTimeout(() => {
-    hiddenWordLetterList[index].innerHTML = `${letter}`;
-  }, delay + 50);
-};
 
 /**
  * Checks if the letter is part of the word to guess,
@@ -200,7 +136,7 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
       // check if letter slot is empty ( if not the letter already was added )
       if (PENDU_SETTING.hiddenWord[letterIndex] === "_") {
         // HTML DISPLAY
-        animAndChangeHiddenWordLetter(letter, letterIndex);
+        animAndChangeHiddenWordLetter(letter, letterIndex, hiddenWordLetterList);
         // also update the array ( use for win / lose / lose point check ) as the display is independant
         PENDU_SETTING.hiddenWord[letterIndex] = letter;
       }
@@ -209,6 +145,7 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
   // after the loop, if the proposed letter isnt in the hiddenWord it mean its a wrong proposal, therefore lose a life
   if (!hiddenWord.includes(letter)) {
     PENDU_SETTING.duringGameLife -= 1;
+    animAddClass("hiddenLetter", lifeElementList[PENDU_SETTING.duringGameLife]);
   }
   // DEBUG
   logInfo();
@@ -232,13 +169,13 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
 export const setupNewGame = () => {
   const wordListArray = PENDU_SETTING.txtToArray;
 
+  intervalShowLetters(lifeElementList);
   PENDU_SETTING.duringGameLife = PENDU_SETTING.defaultLifeCount;
+
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   PENDU_SETTING.hiddenWord = [];
-
   // Clean html display from preview word if needed
-
-  cleanHiddenWordHTML();
+  cleanHTMLDisplay(hiddenWordLetterList);
 
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
@@ -248,10 +185,10 @@ export const setupNewGame = () => {
     createHiddenWordArray(PENDU_SETTING.newGameWord);
     // create html hiddenWord Display
     createHiddenWordHTML();
-    // remove hiddenletter class to show letters one by one
-    intervalShowLetters();
     // get the hidden world letter nodelist after html creation
     hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
+    // remove hiddenletter class to show letters one by one
+    intervalShowLetters(hiddenWordLetterList);
   }
 };
 
@@ -263,15 +200,15 @@ const winConsCheck = () => {
 
     // wait a second to start to hide the word & another second to start another game
     setTimeout(() => {
-      intervalHideLetters();
+      intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
     }, 1000);
   }
   if (PENDU_SETTING.duringGameLife === 0) {
     console.log("PERDU");
 
-    // wait a second to start to hide the word
+    // wait a second to start to hide the word & another second to start another game
     setTimeout(() => {
-      intervalHideLetters();
+      intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
     }, 1000);
   }
 };
@@ -347,6 +284,9 @@ body.addEventListener("keyup", (e) => {
 
 // trigger fetch at start ( this will trigger the setupNewGame for the first game)
 fetchPenduTxt();
+// only need to create the life count display once as nothing is deleted but just hidden
+createLifeCountDisplay();
+lifeElementList = document.querySelectorAll("[class*=bx-ghost]");
 
 // =====================================================================================================================
 // =====================================================================================================================
@@ -369,4 +309,4 @@ const returnedFunction = debounce(function () {
   // All the taxing stuff you do
 }, 250);
 
-// window.addEventListener('resize', returnedFunction);
+window.addEventListener("resize", returnedFunction);
