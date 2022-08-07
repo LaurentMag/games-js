@@ -1,6 +1,8 @@
 # SASS
 .stylesheets/
 # main.css.map
+main.css.map
+
 
 .sass-cache/
 # *.css.map
