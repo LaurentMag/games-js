@@ -1,5 +1,6 @@
 .body-pendu {
-  background-color: rgb(149, 143, 149);
+  // background-color: rgb(149, 143, 149);
+  background-color: rgb(124, 105, 126);
 
   height: 100vh;
 
@@ -17,15 +18,13 @@
 
   position: relative;
 
-  padding: 1rem;
-  width: min(50rem, 90%);
+  // padding: 1rem;
+  // width: min(50rem, 90%);
+  // border-radius: 1rem;
+  // background-color: rgb(92, 77, 94);
+  // box-shadow: 10px 20px 15px rgba(0, 0, 0, 0.176), -10px 20px 15px rgba(0, 0, 0, 0.176);
 
   color: white;
-  background-color: rgb(92, 77, 94);
-
-  border-radius: 1rem;
-
-  box-shadow: 10px 20px 15px rgba(0, 0, 0, 0.176), -10px 20px 15px rgba(0, 0, 0, 0.176);
 
   // ::::::::::::::::::::::
   .pendu-result {
@@ -46,10 +45,12 @@
   display: flex;
   gap: 1.4rem;
 
-  padding: 5rem 4rem 1rem 4rem;
+  // padding: 5rem 4rem 1rem 4rem;
 
   font-size: 3.2rem;
   font-weight: 600;
+
+  text-shadow: 10px 15px 15px rgba(0, 0, 0, 0.176);
 }
 
 // ====================================================================================
@@ -65,9 +66,10 @@
   width: 4rem;
   height: 4rem;
 
-  margin-block: 1rem 2rem;
+  margin-block: 5rem 2rem;
 
   border: 2px solid white;
+  box-shadow: 10px 15px 15px rgba(0, 0, 0, 0.095);
 
   opacity: 1;
   transition: opacity 0.15s, transform 0.15s;
