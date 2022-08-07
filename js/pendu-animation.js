@@ -40,6 +40,7 @@ export const animAddClass = (classToAdd, element) => {
  * Invoke animfadeOutFadeIn() & change letter
  * @param letter - the letter that needs to be changed
  * @param index - the index of the hiddenWord letter nodeList where to operate the change
+ * @param nodeList - select the element from nodeList via index
  */
 export const animAndChangeHiddenWordLetter = (letter, index, nodelist) => {
   // get selected the letter that need to be changed via nodeList[] & index
@@ -88,7 +89,7 @@ export const intervalShowLetters = (nodelist) => {
   let i = 0;
   const animInterval = setInterval(() => {
     animRemoveClass("hiddenLetter", nodelist[i]);
-    // check when i == 0 ( reached the first letter ) to stop the interval with clearInterval..
+    // check when i == nodelist.length - 1 ( reached the lastest letter ) to stop the interval with clearInterval..
     if (i === nodelist.length - 1) {
       clearInterval(animInterval);
     }

@@ -142,9 +142,10 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
       }
     }
   }
-  // after the loop, if the proposed letter isnt in the hiddenWord it mean its a wrong proposal, therefore lose a life
+  // after the loop, if the proposed letter isnt in the hiddenWord mean its a wrong proposal, therefore lose a life
   if (!hiddenWord.includes(letter)) {
     PENDU_SETTING.duringGameLife -= 1;
+    // life HTML anim
     animAddClass("hiddenLetter", lifeElementList[PENDU_SETTING.duringGameLife]);
   }
   // DEBUG
@@ -167,49 +168,41 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
  * - create the html display
  */
 export const setupNewGame = () => {
-  const wordListArray = PENDU_SETTING.txtToArray;
-
   intervalShowLetters(lifeElementList);
   PENDU_SETTING.duringGameLife = PENDU_SETTING.defaultLifeCount;
-
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
-  PENDU_SETTING.hiddenWord = [];
   // Clean html display from preview word if needed
+  PENDU_SETTING.hiddenWord = [];
   cleanHTMLDisplay(hiddenWordLetterList);
 
   if (PENDU_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
-    // generate lowerCase word
-    PENDU_SETTING.newGameWord = wordListArray[randomIndex(wordListArray)].toUpperCase();
+    PENDU_SETTING.newGameWord = PENDU_SETTING.txtToArray[randomIndex(PENDU_SETTING.txtToArray)].toUpperCase();
     // create the hidden word to be displayed in the html
     createHiddenWordArray(PENDU_SETTING.newGameWord);
-    // create html hiddenWord Display
-    createHiddenWordHTML();
-    // get the hidden world letter nodelist after html creation
-    hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
-    // remove hiddenletter class to show letters one by one
-    intervalShowLetters(hiddenWordLetterList);
   }
+
+  createHiddenWordHTML();
+  // get the hidden world letter nodelist after html creation
+  hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
+  // remove hiddenletter class to show letters one by one
+  intervalShowLetters(hiddenWordLetterList);
 };
 
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
-  if (PENDU_SETTING.hiddenWord.includes("_") === false) {
-    // no more "-" mean word found,
-    console.log(" VICTORY ");
-
+  if (PENDU_SETTING.hiddenWord.includes("_") === false || PENDU_SETTING.duringGameLife === 0) {
     // wait a second to start to hide the word & another second to start another game
     setTimeout(() => {
       intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
     }, 1000);
   }
+  if (PENDU_SETTING.hiddenWord.includes("_") === false) {
+    // no more "-" mean word found,
+    console.log(" VICTORY ");
+  }
   if (PENDU_SETTING.duringGameLife === 0) {
     console.log("PERDU");
-
-    // wait a second to start to hide the word & another second to start another game
-    setTimeout(() => {
-      intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
-    }, 1000);
   }
 };
 
@@ -230,6 +223,17 @@ const gameLogic = (letterFromInput) => {
 // =====================================================================================================================
 
 /**
+ * hide the HTML display of the element, adding a css class
+ * @param classParam - the class to add to the element
+ * @param element - the element that will be animated
+ * @param letterValueToReset - letter value that we want to reset.
+ */
+const hideAndResetLetter = (classParam, element, letterValueToReset) => {
+  animAddClass(classP, element);
+  letterValueToReset = "";
+};
+
+/**
  * input management invoked in body eventListener
  *
  * Check if its a letter, if so, send it to GameLogic. Else, request to type a letter.
@@ -237,7 +241,7 @@ const gameLogic = (letterFromInput) => {
  *
  * @param e - event coming from keyup eventListener
  */
-function manageInput(e) {
+function handleKeyInput(e) {
   const regex = /[A-Za-z]/;
   //
   // length of 1 = otherwise can display "shift" / "command"... and other function keys as string
@@ -255,21 +259,20 @@ function manageInput(e) {
   if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     gameLogic(PENDU_SETTING.selectedLetter);
-    // reset letter after "enter"
-    animAddClass("hiddenLetter", typedLetterContainer);
-    PENDU_SETTING.selectedLetter = "";
+    // hide display & reset letter after "enter"
+    hideAndResetLetter("hiddenLetter", typedLetterContainer, PENDU_SETTING.selectedLetter);
+
     //
   } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
     // SEND ERR MESS IF ENTER & LETTER IS <empty.string>
     // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send as letter is reset)
-    console.log("Type a Key");
+    console.log("Type a Letter");
   }
 
   // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    animAddClass("hiddenLetter", typedLetterContainer);
-    PENDU_SETTING.selectedLetter = "";
+    hideAndResetLetter("hiddenLetter", typedLetterContainer, PENDU_SETTING.selectedLetter);
   }
 }
 
@@ -279,10 +282,10 @@ body.addEventListener("keyup", (e) => {
   e.preventDefault();
   e.stopPropagation();
 
-  manageInput(e);
+  handleKeyInput(e);
 });
 
-// trigger fetch at start ( this will trigger the setupNewGame for the first game)
+// trigger fetch at start ( this will also trigger the setupNewGame for the first game )
 fetchPenduTxt();
 // only need to create the life count display once as nothing is deleted but just hidden
 createLifeCountDisplay();
