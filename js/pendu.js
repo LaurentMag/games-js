@@ -229,7 +229,7 @@ const gameLogic = (letterFromInput) => {
  * @param letterValueToReset - letter value that we want to reset.
  */
 const hideAndResetLetter = (classParam, element, letterValueToReset) => {
-  animAddClass(classP, element);
+  animAddClass(classParam, element);
   letterValueToReset = "";
 };
 
