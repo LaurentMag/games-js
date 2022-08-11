@@ -6,7 +6,7 @@ import {
   animfadeOutFadeIn,
   animAndChangeHiddenWordLetter,
   intervalHideLettersAndNewGame,
-  intervalShowLetters,
+  intervalShowElements,
 } from "./pendu-animation.js";
 
 // HTML ELEMENTS
@@ -168,7 +168,7 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
  * - create the html display
  */
 export const setupNewGame = () => {
-  intervalShowLetters(lifeElementList);
+  intervalShowElements(lifeElementList);
   PENDU_SETTING.duringGameLife = PENDU_SETTING.defaultLifeCount;
   // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
   // Clean html display from preview word if needed
@@ -186,9 +186,11 @@ export const setupNewGame = () => {
   // get the hidden world letter nodelist after html creation
   hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
   // remove hiddenletter class to show letters one by one
-  intervalShowLetters(hiddenWordLetterList);
+  intervalShowElements(hiddenWordLetterList);
 };
 
+// __________________________________ __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________ __________________________________
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
   if (PENDU_SETTING.hiddenWord.includes("_") === false || PENDU_SETTING.duringGameLife === 0) {
@@ -206,7 +208,8 @@ const winConsCheck = () => {
   }
 };
 
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
+// __________________________________ __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________ __________________________________
 /**
  * GameLogic invoked after each letter guess send
  * It checks if the letter is in the selected word, and then checks for the winCons / lose
