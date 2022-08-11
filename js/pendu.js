@@ -45,7 +45,8 @@ const logInfo = () => {
 };
 
 // =====================================================================================================================
-// UTILITIES
+// ==================================================    UTILITIES    ==================================================
+// =====================================================================================================================
 /**
  * Return a random index from an Array
  * @param Array
@@ -74,7 +75,8 @@ const sendSelectLetterToHtml = (letter) => {
 };
 
 // =====================================================================================================================
-// CREATE / MANAGE RESULT ELEMENTS
+// ======================================    HTML ELEMENT CREATION / DELETION    ======================================
+// =====================================================================================================================
 
 /**
  * Generate a paragraph, append it to selected parent, and add class
@@ -116,9 +118,7 @@ const cleanHTMLDisplay = (nodelist) => {
 };
 
 // =====================================================================================================================
-// ANIMATIONS
-
-// =====================================================================================================================
+// =================================================    CHECK WORD    =================================================
 // =====================================================================================================================
 
 /**
@@ -153,8 +153,8 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
 };
 
 // =====================================================================================================================
+// =================================================    GAME LOGIC    =================================================
 // =====================================================================================================================
-// GAME LOGIC
 
 // NEW GAME invoked after first fetch, and after a win or lose
 /**
@@ -194,7 +194,7 @@ const winConsCheck = () => {
   if (PENDU_SETTING.hiddenWord.includes("_") === false || PENDU_SETTING.duringGameLife === 0) {
     // wait a second to start hide the word & another second to start another game
     setTimeout(() => {
-      intervalHideLettersAndNewGame(hiddenWordLetterList, lifeElementList);
+      intervalHideLettersAndNewGame(hiddenWordLetterList);
     }, 1000);
   }
   if (PENDU_SETTING.hiddenWord.includes("_") === false) {
@@ -220,18 +220,8 @@ const gameLogic = (letterFromInput) => {
 };
 
 // =====================================================================================================================
+// =================================================    INPUT    =================================================
 // =====================================================================================================================
-
-/**
- * hide the HTML display of the element, adding a css class
- * @param classParam - the class to add to the element
- * @param element - the element that will be animated
- * @param letterValueToReset - letter value that we want to reset.
- */
-const hideAndResetLetter = (classParam, element, letterValueToReset) => {
-  animAddClass(classParam, element);
-  letterValueToReset = "";
-};
 
 /**
  * input management invoked in body eventListener
@@ -260,7 +250,8 @@ function handleKeyInput(e) {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
     gameLogic(PENDU_SETTING.selectedLetter);
     // hide display & reset letter after "enter"
-    hideAndResetLetter("hiddenLetter", typedLetterContainer, PENDU_SETTING.selectedLetter);
+    animAddClass("hiddenLetter", typedLetterContainer);
+    PENDU_SETTING.selectedLetter = "";
 
     //
   } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {

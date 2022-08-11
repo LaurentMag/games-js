@@ -61,6 +61,7 @@ export const animAndChangeHiddenWordLetter = (letter, index, nodelist) => {
  */
 export const intervalHideLettersAndNewGame = (nodelist) => {
   let i = nodelist.length - 1;
+  console.log(nodelist);
   //   let j = nodelist2.length - 1;
   const animInterval = setInterval(() => {
     animAddClass("hiddenLetter", nodelist[i]);
