@@ -23,10 +23,12 @@ let lifeElementList = [];
 const typedLetterContainer = document.querySelector(".pendu-displayLetter-container");
 
 // =====================================================================================================================
+// ==================================================    SETTINGS    ==================================================
+// =====================================================================================================================
 // animation delay (used for selected letter -for now-)
 export const delay = 120;
 
-export const PENDU_SETTING = {
+export const GAME_SETTING = {
   defaultLifeCount: 6,
   txtToArray: [],
   //
@@ -38,9 +40,9 @@ export const PENDU_SETTING = {
 };
 
 const logInfo = () => {
-  console.log("current word : ", PENDU_SETTING.newGameWord);
-  console.log("Letter sent : ", PENDU_SETTING.selectedLetter);
-  console.log("life count : ", PENDU_SETTING.duringGameLife);
+  console.log("current word : ", GAME_SETTING.newGameWord);
+  console.log("Letter sent : ", GAME_SETTING.selectedLetter);
+  console.log("life count : ", GAME_SETTING.duringGameLife);
   console.log("-----------------------");
 };
 
@@ -60,9 +62,9 @@ const randomIndex = (array) => {
  * Take create the hidden word (array) using the game selected word length
  * @param {*} the reference Array
  */
-const createHiddenWordArray = (modelArray) => {
+const createHiddenArray = (modelArray) => {
   for (let i = 0; i < modelArray.length; i++) {
-    PENDU_SETTING.hiddenWord.push("_");
+    GAME_SETTING.hiddenWord.push("_");
   }
 };
 
@@ -84,10 +86,13 @@ const sendSelectLetterToHtml = (letter) => {
  * @param whereToAppend - the parent element where to append the p created
  * @param classNameParam -  p class
  */
-const createLetterElem = (letterToDisplay, whereToAppend, classNameParam) => {
+const htmlCreateElement = (letterToDisplay, whereToAppend, classNameParam) => {
   const pToCreate = document.createElement("p");
   whereToAppend.append(pToCreate);
-  pToCreate.innerHTML = `${letterToDisplay}`;
+
+  if (letterToDisplay !== "") {
+    pToCreate.innerHTML = `${letterToDisplay}`;
+  }
   // use array index to number letter class, will be used to know which letter need to be replaced
   pToCreate.className = classNameParam;
 };
@@ -95,22 +100,22 @@ const createLetterElem = (letterToDisplay, whereToAppend, classNameParam) => {
 /**
  * Map through the hiddenWord array.  Create a paragraph per letter
  */
-const createHiddenWordHTML = () => {
-  PENDU_SETTING.hiddenWord.map((letter, index) => {
-    createLetterElem(letter, hiddenWordDisplayContainer, `hidden-letter-${index} hiddenLetter`);
+const htmlCreateHiddenElements = () => {
+  GAME_SETTING.hiddenWord.map((letter, index) => {
+    htmlCreateElement(letter, hiddenWordDisplayContainer, `hidden-letter-${index} hiddenLetter`);
   });
 };
 
-const createLifeCountDisplay = () => {
-  for (let i = 0; i < PENDU_SETTING.defaultLifeCount; i++) {
-    createLetterElem("", lifeCountContainer, `bx bx-ghost life-${i}`);
+const htmlCreateLifeCount = () => {
+  for (let i = 0; i < GAME_SETTING.defaultLifeCount; i++) {
+    htmlCreateElement("", lifeCountContainer, `bx bx-ghost life-${i}`);
   }
 };
 
 /**
  * Clear HTML display from the hiddenWord, Invidual p for each letter,
  */
-const cleanHTMLDisplay = (nodelist) => {
+const htmlCleanElements = (nodelist) => {
   // if the nodeList isnt empty there is something to delete
   if (nodelist.length !== 0) {
     nodelist.forEach((element) => element.remove());
@@ -134,19 +139,19 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
     // check if the letter is in the wordToGuess
     if (letter === wordToGuess.charAt(letterIndex)) {
       // check if letter slot is empty ( if not the letter already was added )
-      if (PENDU_SETTING.hiddenWord[letterIndex] === "_") {
+      if (GAME_SETTING.hiddenWord[letterIndex] === "_") {
         // HTML DISPLAY
         animAndChangeHiddenWordLetter(letter, letterIndex, hiddenWordLetterList);
         // also update the array ( use for win / lose / lose point check ) as the display is independant
-        PENDU_SETTING.hiddenWord[letterIndex] = letter;
+        GAME_SETTING.hiddenWord[letterIndex] = letter;
       }
     }
   }
   // after the loop, if the proposed letter isnt in the hiddenWord mean its a wrong proposal, therefore lose a life
   if (!hiddenWord.includes(letter)) {
-    PENDU_SETTING.duringGameLife -= 1;
+    GAME_SETTING.duringGameLife -= 1;
     // life HTML anim
-    animAddClass("hiddenLetter", lifeElementList[PENDU_SETTING.duringGameLife]);
+    animAddClass("hiddenLetter", lifeElementList[GAME_SETTING.duringGameLife]);
   }
   // DEBUG
   logInfo();
@@ -168,48 +173,54 @@ const checkForLetter = (letter, wordToGuess, hiddenWord) => {
  * - create the html display
  */
 export const setupNewGame = () => {
+  // reset life count
   intervalShowElements(lifeElementList);
-  PENDU_SETTING.duringGameLife = PENDU_SETTING.defaultLifeCount;
-  // reset the PENDU_SETTING.hiddenWord array at each "start / restart"
-  // Clean html display from preview word if needed
-  PENDU_SETTING.hiddenWord = [];
-  cleanHTMLDisplay(hiddenWordLetterList);
+  // reset life count value
+  GAME_SETTING.duringGameLife = GAME_SETTING.defaultLifeCount;
 
-  if (PENDU_SETTING.oneOrTwoPlayer == 1) {
+  // reset the GAME_SETTING.hiddenWord array at each "start / restart"
+  GAME_SETTING.hiddenWord = [];
+  // Clean html display from preview word if needed
+  htmlCleanElements(hiddenWordLetterList);
+
+  // CHECK if one player
+  if (GAME_SETTING.oneOrTwoPlayer == 1) {
     // select a random word from the .txt turned as array
-    PENDU_SETTING.newGameWord = PENDU_SETTING.txtToArray[randomIndex(PENDU_SETTING.txtToArray)].toUpperCase();
+    GAME_SETTING.newGameWord = GAME_SETTING.txtToArray[randomIndex(GAME_SETTING.txtToArray)].toUpperCase();
   }
 
   // create the hidden word to be displayed in the html
-  createHiddenWordArray(PENDU_SETTING.newGameWord);
-  createHiddenWordHTML();
-  // get the hidden world letter nodelist after html creation
+  createHiddenArray(GAME_SETTING.newGameWord);
+  // create the html elements to the hidden display
+  htmlCreateHiddenElements();
+
+  // get the hidden world letter nodelist after html creation for further managment
   hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
   // remove hiddenletter class to show letters one by one
   intervalShowElements(hiddenWordLetterList);
 };
 
-// __________________________________ __________________________________ __________________________________ __________________________________
-// __________________________________ __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
-  if (PENDU_SETTING.hiddenWord.includes("_") === false || PENDU_SETTING.duringGameLife === 0) {
+  if (GAME_SETTING.hiddenWord.includes("_") === false || GAME_SETTING.duringGameLife === 0) {
     // wait a second to start hide the word & another second to start another game
     setTimeout(() => {
-      intervalHideLettersAndNewGame(hiddenWordLetterList);
+      intervalHideLettersAndNewGame(hiddenWordLetterList, setupNewGame);
     }, 1000);
   }
-  if (PENDU_SETTING.hiddenWord.includes("_") === false) {
+  if (GAME_SETTING.hiddenWord.includes("_") === false) {
     // no more "-" mean word found,
     console.log(" VICTORY ");
   }
-  if (PENDU_SETTING.duringGameLife === 0) {
+  if (GAME_SETTING.duringGameLife === 0) {
     console.log("PERDU");
   }
 };
 
-// __________________________________ __________________________________ __________________________________ __________________________________
-// __________________________________ __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________
+// __________________________________ __________________________________ __________________________________
 /**
  * GameLogic invoked after each letter guess send
  * It checks if the letter is in the selected word, and then checks for the winCons / lose
@@ -217,7 +228,7 @@ const winConsCheck = () => {
  */
 const gameLogic = (letterFromInput) => {
   // check if the letter is in the selected word
-  checkForLetter(letterFromInput, PENDU_SETTING.newGameWord, PENDU_SETTING.hiddenWord);
+  checkForLetter(letterFromInput, GAME_SETTING.newGameWord, GAME_SETTING.hiddenWord);
   // at each letter input check for the winCons / lose
   winConsCheck();
 };
@@ -241,23 +252,23 @@ function handleKeyInput(e) {
   if (e.key.length === 1 && e.key.match(regex) !== null) {
     animfadeOutFadeIn("hiddenLetter", typedLetterContainer);
 
-    PENDU_SETTING.selectedLetter = e.key.toUpperCase();
+    GAME_SETTING.selectedLetter = e.key.toUpperCase();
     // add timeout to add letter for fadeOut anim part to run first
     setTimeout(() => {
-      sendSelectLetterToHtml(PENDU_SETTING.selectedLetter);
+      sendSelectLetterToHtml(GAME_SETTING.selectedLetter);
     }, delay);
   }
 
   // ______________________________________________________________
-  if (e.key === "Enter" && PENDU_SETTING.selectedLetter !== "") {
+  if (e.key === "Enter" && GAME_SETTING.selectedLetter !== "") {
     // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
-    gameLogic(PENDU_SETTING.selectedLetter);
+    gameLogic(GAME_SETTING.selectedLetter);
     // hide display & reset letter after "enter"
     animAddClass("hiddenLetter", typedLetterContainer);
-    PENDU_SETTING.selectedLetter = "";
+    GAME_SETTING.selectedLetter = "";
 
     //
-  } else if (e.key === "Enter" && PENDU_SETTING.selectedLetter === "") {
+  } else if (e.key === "Enter" && GAME_SETTING.selectedLetter === "") {
     // SEND ERR MESS IF ENTER & LETTER IS <empty.string>
     // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send as letter is reset)
     console.log("Type a Letter");
@@ -266,7 +277,7 @@ function handleKeyInput(e) {
   // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    hideAndResetLetter("hiddenLetter", typedLetterContainer, PENDU_SETTING.selectedLetter);
+    hideAndResetLetter("hiddenLetter", typedLetterContainer, GAME_SETTING.selectedLetter);
   }
 }
 
@@ -282,7 +293,7 @@ body.addEventListener("keyup", (e) => {
 // trigger fetch at start ( this will also trigger the setupNewGame for the first game )
 fetchPenduTxt();
 // only need to create the life count display once as nothing is deleted but just hidden
-createLifeCountDisplay();
+htmlCreateLifeCount();
 lifeElementList = document.querySelectorAll("[class*=bx-ghost]");
 
 // =====================================================================================================================
