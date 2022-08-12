@@ -15,12 +15,12 @@ export const animfadeOutFadeIn = (classToSwitch, element) => {
 // __________________________________ __________________________________ __________________________________
 /**
  * Remove a class from an element.
- * @param classToAdd - The class that will be removed from the element.
- * @param element - The element that you want to remove the class from.
+ * @param cssClass - The class that will be removed from the element.
+ * @param element - The html element that you want to remove the class from.
  */
-const animRemoveClass = (classToAdd, element) => {
-  if (element.classList.contains(classToAdd) === true) {
-    element.classList.remove(classToAdd);
+const animRemoveClass = (cssClass, element) => {
+  if (element.classList.contains(cssClass) === true) {
+    element.classList.remove(cssClass);
   }
 };
 
@@ -28,12 +28,12 @@ const animRemoveClass = (classToAdd, element) => {
 // __________________________________ __________________________________ __________________________________
 /**
  * Add a class to an element.
- * @param classToAdd - The class that will be added to the element.
- * @param element - The element that you want to add the class to.
+ * @param cssClass - The class that will be added to the element.
+ * @param element - The html element that you want to add the class to.
  */
-export const animAddClass = (classToAdd, element) => {
-  if (element.classList.contains(classToAdd) === false) {
-    element.classList.add(classToAdd);
+export const animAddClass = (cssClass, element) => {
+  if (element.classList.contains(cssClass) === false) {
+    element.classList.add(cssClass);
   }
 };
 
@@ -41,11 +41,11 @@ export const animAddClass = (classToAdd, element) => {
 // __________________________________ __________________________________ __________________________________
 /**
  * Invoke animfadeOutFadeIn() & change letter
- * @param letter - the letter that needs to be changed
- * @param index - the index of the hiddenWord letter nodeList where to operate the change
- * @param nodeList - select the element from nodeList via index
+ * @param letter - letter that will be displayed
+ * @param index - the index from hiddenWord array
+ * @param nodeList - select which innerHtml element to change using nodelist[index]
  */
-export const animAndChangeHiddenWordLetter = (letter, index, nodelist) => {
+export const animToChangeHiddenLetter = (letter, index, nodelist) => {
   // get selected the letter that need to be changed via nodeList[] & index
   animfadeOutFadeIn("hiddenLetter", nodelist[index]);
   // setTimeout to add the letter once the fadeIn animation is done

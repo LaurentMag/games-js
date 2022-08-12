@@ -11,7 +11,7 @@ const toArray = (txtFetched) => {
   // set text into array
   // use regex to "split" with space (\s) coma (,) or next line (\n)
   // + mean : eventualy several
-  return (GAME_SETTING.txtToArray = txtFetched.split(/[\s,\n]+/));
+  return (GAME_SETTING.fetchedWordsArray = txtFetched.split(/[\s,\n]+/));
 };
 
 /**

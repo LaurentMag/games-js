@@ -4,7 +4,7 @@ import {fetchPenduTxt} from "./pendu-fetch.js";
 import {
   animAddClass,
   animfadeOutFadeIn,
-  animAndChangeHiddenWordLetter,
+  animToChangeHiddenLetter,
   intervalHideLettersAndNewGame,
   intervalShowElements,
 } from "./pendu-animation.js";
@@ -30,17 +30,18 @@ export const delay = 120;
 
 export const GAME_SETTING = {
   defaultLifeCount: 6,
-  txtToArray: [],
+  fetchedWordsArray: [],
+  hiddenLetter: "_",
   //
   oneOrTwoPlayer: 1,
-  newGameWord: "",
+  selectedWordToGuess: "",
   hiddenWord: [],
   selectedLetter: "",
   duringGameLife: 0,
 };
 
 const logInfo = () => {
-  console.log("current word : ", GAME_SETTING.newGameWord);
+  console.log("current word : ", GAME_SETTING.selectedWordToGuess);
   console.log("Letter sent : ", GAME_SETTING.selectedLetter);
   console.log("life count : ", GAME_SETTING.duringGameLife);
   console.log("-----------------------");
@@ -64,7 +65,7 @@ const randomIndex = (array) => {
  */
 const createHiddenArray = (modelArray) => {
   for (let i = 0; i < modelArray.length; i++) {
-    GAME_SETTING.hiddenWord.push("_");
+    GAME_SETTING.hiddenWord.push(GAME_SETTING.hiddenLetter);
   }
 };
 
@@ -98,7 +99,7 @@ const htmlCreateElement = (letterToDisplay, whereToAppend, classNameParam) => {
 };
 
 /**
- * Map through the hiddenWord array.  Create a paragraph per letter
+ * Map through the GAME_SETTING.hiddenWord array. Then create a paragraph per letter
  */
 const htmlCreateHiddenElements = () => {
   GAME_SETTING.hiddenWord.map((letter, index) => {
@@ -123,42 +124,7 @@ const htmlCleanElements = (nodelist) => {
 };
 
 // =====================================================================================================================
-// =================================================    CHECK WORD    =================================================
-// =====================================================================================================================
-
-/**
- * Checks if the letter is part of the word to guess,
- * - if it is, it replaces the underscore with the letter,
- * - if it's not, it decreases the life count
- * @param letter - the letter that the user has entered
- * @param wordToGuess - the word that the player is trying to guess
- * @param hiddenWord - the word to be guessed, but with all the letters hidden.
- */
-const checkForLetter = (letter, wordToGuess, hiddenWord) => {
-  for (const letterIndex in wordToGuess) {
-    // check if the letter is in the wordToGuess
-    if (letter === wordToGuess.charAt(letterIndex)) {
-      // check if letter slot is empty ( if not the letter already was added )
-      if (GAME_SETTING.hiddenWord[letterIndex] === "_") {
-        // HTML DISPLAY
-        animAndChangeHiddenWordLetter(letter, letterIndex, hiddenWordLetterList);
-        // also update the array ( use for win / lose / lose point check ) as the display is independant
-        GAME_SETTING.hiddenWord[letterIndex] = letter;
-      }
-    }
-  }
-  // after the loop, if the proposed letter isnt in the hiddenWord mean its a wrong proposal, therefore lose a life
-  if (!hiddenWord.includes(letter)) {
-    GAME_SETTING.duringGameLife -= 1;
-    // life HTML anim
-    animAddClass("hiddenLetter", lifeElementList[GAME_SETTING.duringGameLife]);
-  }
-  // DEBUG
-  logInfo();
-};
-
-// =====================================================================================================================
-// =================================================    GAME LOGIC    =================================================
+// =============================================    NEW GAME CONDITIONS    =============================================
 // =====================================================================================================================
 
 // NEW GAME invoked after first fetch, and after a win or lose
@@ -183,34 +149,70 @@ export const setupNewGame = () => {
   // Clean html display from preview word if needed
   htmlCleanElements(hiddenWordLetterList);
 
-  // CHECK if one player
+  // CHECK PLAYER COUNT
+  // ______________________________________________________________
   if (GAME_SETTING.oneOrTwoPlayer == 1) {
+    const arrayIndex = randomIndex(GAME_SETTING.fetchedWordsArray);
     // select a random word from the .txt turned as array
-    GAME_SETTING.newGameWord = GAME_SETTING.txtToArray[randomIndex(GAME_SETTING.txtToArray)].toUpperCase();
+    GAME_SETTING.selectedWordToGuess = GAME_SETTING.fetchedWordsArray[arrayIndex].toUpperCase();
+    // create the hidden word to be displayed in the html
+    createHiddenArray(GAME_SETTING.selectedWordToGuess);
   }
+  // ______________________________________________________________
 
-  // create the hidden word to be displayed in the html
-  createHiddenArray(GAME_SETTING.newGameWord);
-  // create the html elements to the hidden display
+  // create the html elements for the hidden display
   htmlCreateHiddenElements();
-
   // get the hidden world letter nodelist after html creation for further managment
   hiddenWordLetterList = document.querySelectorAll("[class^=hidden-letter-]");
   // remove hiddenletter class to show letters one by one
   intervalShowElements(hiddenWordLetterList);
 };
+// =====================================================================================================================
+// =================================================    CHECK WORD    =================================================
+// =====================================================================================================================
 
-// __________________________________ __________________________________ __________________________________
-// __________________________________ __________________________________ __________________________________
+/**
+ * Checks if the letter is part of the word to guess,
+ * - if it is, it replaces the underscore with the letter,
+ * - if it's not, it decreases the life count
+ * @param letter - the letter that the user has entered
+ * @param wordToGuess - the word that the player is trying to guess
+ * @param hiddenWord - the word to be guessed, but with all the letters hidden.
+ */
+const checkForLetter = (letter, wordToGuess, hiddenWord) => {
+  for (const letterIndex in wordToGuess) {
+    // check if the letter is in the wordToGuess
+    if (letter === wordToGuess.charAt(letterIndex)) {
+      // check if letter slot is empty ( if not the letter already was added )
+      if (GAME_SETTING.hiddenWord[letterIndex] === GAME_SETTING.hiddenLetter) {
+        // HTML DISPLAY
+        animToChangeHiddenLetter(letter, letterIndex, hiddenWordLetterList);
+        // also update the array ( use for win / lose / lose point check ) as the display is independant
+        GAME_SETTING.hiddenWord[letterIndex] = letter;
+      }
+    }
+  }
+  // after the loop, if the proposed letter isnt in the hiddenWord mean its a wrong proposal, therefore lose a life
+  if (hiddenWord.includes(letter) == false) {
+    GAME_SETTING.duringGameLife -= 1;
+    // life HTML anim
+    animAddClass("hiddenLetter", lifeElementList[GAME_SETTING.duringGameLife]);
+  }
+  // DEBUG
+  logInfo();
+};
+// =====================================================================================================================
+// ===================================================    WINCONS    ===================================================
+// =====================================================================================================================
 // WIN OR LOOSE CHECK AND EFFECT : will be changed
 const winConsCheck = () => {
-  if (GAME_SETTING.hiddenWord.includes("_") === false || GAME_SETTING.duringGameLife === 0) {
+  if (GAME_SETTING.hiddenWord.includes(GAME_SETTING.hiddenLetter) === false || GAME_SETTING.duringGameLife === 0) {
     // wait a second to start hide the word & another second to start another game
     setTimeout(() => {
       intervalHideLettersAndNewGame(hiddenWordLetterList, setupNewGame);
     }, 1000);
   }
-  if (GAME_SETTING.hiddenWord.includes("_") === false) {
+  if (GAME_SETTING.hiddenWord.includes(GAME_SETTING.hiddenLetter) === false) {
     // no more "-" mean word found,
     console.log(" VICTORY ");
   }
@@ -219,8 +221,9 @@ const winConsCheck = () => {
   }
 };
 
-// __________________________________ __________________________________ __________________________________
-// __________________________________ __________________________________ __________________________________
+// =====================================================================================================================
+// =================================================    GAME LOGIC    =================================================
+// =====================================================================================================================
 /**
  * GameLogic invoked after each letter guess send
  * It checks if the letter is in the selected word, and then checks for the winCons / lose
@@ -228,13 +231,13 @@ const winConsCheck = () => {
  */
 const gameLogic = (letterFromInput) => {
   // check if the letter is in the selected word
-  checkForLetter(letterFromInput, GAME_SETTING.newGameWord, GAME_SETTING.hiddenWord);
+  checkForLetter(letterFromInput, GAME_SETTING.selectedWordToGuess, GAME_SETTING.hiddenWord);
   // at each letter input check for the winCons / lose
   winConsCheck();
 };
 
 // =====================================================================================================================
-// =================================================    INPUT    =================================================
+// =================================================    INPUT CHECK    =================================================
 // =====================================================================================================================
 
 /**
@@ -247,8 +250,8 @@ const gameLogic = (letterFromInput) => {
  */
 function handleKeyInput(e) {
   const regex = /[A-Za-z]/;
-  //
-  // length of 1 = otherwise can display "shift" / "command"... and other function keys as string
+  // length of 1 otherwise can display "shift" / "command"... and other function keys as string
+  // and with the regex only keep the first letter
   if (e.key.length === 1 && e.key.match(regex) !== null) {
     animfadeOutFadeIn("hiddenLetter", typedLetterContainer);
 
@@ -260,29 +263,33 @@ function handleKeyInput(e) {
   }
 
   // ______________________________________________________________
-  if (e.key === "Enter" && GAME_SETTING.selectedLetter !== "") {
-    // INVOKE GAME LOGIC WHEN "ENTER" and LETTER ISNT <empty.string>
-    gameLogic(GAME_SETTING.selectedLetter);
-    // hide display & reset letter after "enter"
-    animAddClass("hiddenLetter", typedLetterContainer);
+  // when press enter to send the letter
+  if (e.key === "Enter") {
+    if (GAME_SETTING.selectedLetter === "") {
+      // check if letter is empty first ( as after each "enter" the "selectedLetter" will be reset to <emptyString>)
+      console.log("Type a Letter");
+    }
+    if (GAME_SETTING.selectedLetter !== "") {
+      // send the letter to the gamelogic ( as the letter can only be [A-Z] because regex check)
+      gameLogic(GAME_SETTING.selectedLetter);
+      // play hide display animation
+      animAddClass("hiddenLetter", typedLetterContainer);
+    }
+    // reset letter ( prevent enter spam and keep send the preview valid letter sent)
     GAME_SETTING.selectedLetter = "";
-
-    //
-  } else if (e.key === "Enter" && GAME_SETTING.selectedLetter === "") {
-    // SEND ERR MESS IF ENTER & LETTER IS <empty.string>
-    // ( else if as need to check if can send first, otherwise will send err mess after each succesfull send as letter is reset)
-    console.log("Type a Letter");
   }
 
   // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    hideAndResetLetter("hiddenLetter", typedLetterContainer, GAME_SETTING.selectedLetter);
+    animAddClass("hiddenLetter", typedLetterContainer);
+    GAME_SETTING.selectedLetter = "";
   }
 }
 
-// ::::::::::::::::::::::::::::::::::::::::::::::::::::
-// KEY PRESS MANAGEMENT
+// =====================================================================================================================
+// ===============================================    INPUT LISTENER    ===============================================
+// =====================================================================================================================
 body.addEventListener("keyup", (e) => {
   e.preventDefault();
   e.stopPropagation();
@@ -294,6 +301,7 @@ body.addEventListener("keyup", (e) => {
 fetchPenduTxt();
 // only need to create the life count display once as nothing is deleted but just hidden
 htmlCreateLifeCount();
+// get node list once created for futher usage
 lifeElementList = document.querySelectorAll("[class*=bx-ghost]");
 
 // =====================================================================================================================
