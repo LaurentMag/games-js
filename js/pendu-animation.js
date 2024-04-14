@@ -1,6 +1,7 @@
 "use strict";
 
-import {delay, setupNewGame} from "./pendu.js";
+import {setupNewGame} from "./pendu.js";
+import {delay} from "./gameSettings.js";
 
 export const animfadeOutFadeIn = (classToSwitch, element) => {
   if (!element.classList.contains(classToSwitch)) {
@@ -40,12 +41,12 @@ export const animAddClass = (cssClass, element) => {
 // __________________________________ __________________________________ __________________________________
 // __________________________________ __________________________________ __________________________________
 /**
- * Invoke animfadeOutFadeIn() & change letter
+ * Invoke animfadeOutFadeIn() & change the HTML element innerHTML to display the letter
  * @param letter - letter that will be displayed
  * @param index - the index from hiddenWord array
  * @param nodeList - select which innerHtml element to change using nodelist[index]
  */
-export const animToChangeHiddenLetter = (letter, index, nodelist) => {
+export const animThenChangeHTML = (letter, index, nodelist) => {
   // get selected the letter that need to be changed via nodeList[] & index
   animfadeOutFadeIn("hiddenLetter", nodelist[index]);
   // setTimeout to add the letter once the fadeIn animation is done
@@ -59,8 +60,8 @@ export const animToChangeHiddenLetter = (letter, index, nodelist) => {
 
 /**
  * Interval loops through the selected NodeList array.
- * Calls the animAddClass function on each letter to hide the display, once it reach the first letter, clears interval.
- *  And starts a new game
+ * Calls the animAddClass function on each letter to hide, once it reach the first letter, clears interval.
+ * Then run functionAtAnimEnd()
  * @param nodelist - the list of letters to hide
  */
 export const intervalHideLettersAndNewGame = (nodelist, functionAtAnimEnd) => {

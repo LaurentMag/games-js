@@ -1,6 +1,7 @@
 "use strict";
 
-import {GAME_SETTING, setupNewGame} from "./pendu.js";
+import {GAME_SETTING} from "./gameSettings.js";
+import {setupNewGame} from "./pendu.js";
 
 /**
  * Take the fetched .txt ( string ) and convert it to an Array of individual words
