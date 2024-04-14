@@ -1,4 +1,4 @@
-import {GAME_SETTING} from "./gameSettings.js";
+import SETTINGS from "./gameSettings.js";
 import {displaySelectedLetter} from "./htmlElements.js";
 
 /**
@@ -16,7 +16,7 @@ const randomIndex = (array) => {
  */
 const createHiddenArray = (modelArray) => {
   for (let i = 0; i < modelArray.length; i++) {
-    GAME_SETTING.hiddenWord.push(GAME_SETTING.hiddenLetter);
+    SETTINGS.hiddenWord.push(SETTINGS.hideLetter);
   }
 };
 

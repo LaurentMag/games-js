@@ -1,5 +1,4 @@
-import {GAME_SETTING} from "./gameSetting.js";
-
+import SETTINGS from "./gameSettings.js";
 import {lifeCountContainer, hiddenWordDisplayContainer} from "./htmlElements.js";
 
 /**
@@ -8,7 +7,7 @@ import {lifeCountContainer, hiddenWordDisplayContainer} from "./htmlElements.js"
  * @param whereToAppend - the parent element where to append the p created
  * @param classNameParam -  p class
  */
-const htmlCreateElement = (letterToDisplay, whereToAppend, classNameParam) => {
+const createHtmlParagraphe = (letterToDisplay, whereToAppend, classNameParam) => {
   const pToCreate = document.createElement("p");
   whereToAppend.append(pToCreate);
 
@@ -20,28 +19,28 @@ const htmlCreateElement = (letterToDisplay, whereToAppend, classNameParam) => {
 };
 
 /**
- * Map through the GAME_SETTING.hiddenWord array. Then create a paragraph per letter
+ * Map through the SETTINGS.hiddenWord array. Then create a paragraph per letter
  */
-export const htmlCreateHiddenElements = () => {
-  GAME_SETTING.hiddenWord.map((letter, index) => {
-    htmlCreateElement(
+export const createHiddenLettersElements = () => {
+  SETTINGS.hiddenWord.forEach((letter, index) => {
+    createHtmlParagraphe(
       letter,
       hiddenWordDisplayContainer,
-      `hidden-letter-${index} hiddenLetter`
+      `obscured-letter-${index} hideLetter`
     );
   });
 };
 
-export const htmlCreateLifeCount = () => {
-  for (let i = 0; i < GAME_SETTING.defaultLifeCount; i++) {
-    htmlCreateElement("", lifeCountContainer, `bx bx-ghost life-${i}`);
+export const createLifeCountElements = () => {
+  for (let i = 0; i < SETTINGS.lifeCount; i++) {
+    createHtmlParagraphe("", lifeCountContainer, `bx bx-ghost life-${i}`);
   }
 };
 
 /**
  * Clear HTML display from the hiddenWord, Invidual p for each letter,
  */
-export const htmlCleanElements = (nodelist) => {
+export const clearHtmlElements = (nodelist) => {
   // if the nodeList isnt empty there is something to delete
   if (nodelist.length !== 0) {
     nodelist.forEach((element) => element.remove());

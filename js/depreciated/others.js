@@ -1,3 +1,5 @@
+import {hiddenWordLetterList} from "./gameSettings.js";
+
 /**
  * check if first word letter to set it in upperCase
  * @param index - Index of the letter
@@ -19,11 +21,11 @@ const upperOrLowerCase = (index, indexToUpper, letter) => {
 // LOOP VERSION WITH SET_TIMEOUT
 const HideLetterPerLetter = () => {
   // get the amount of letter
-  let i = hiddenWordLetterList.length - 1;
+  let i = GAME_SETTING.hiddenWordLetterList.length - 1;
   const letterFadeLoop = () => {
     // it will stop the "loop" once it reach the first letter
     if (i >= 0) {
-      animFadeOut("hiddenLetter", hiddenWordLetterList[i]);
+      animFadeOut("letter-hidden", GAME_SETTING.hiddenWordLetterList[i]);
       i--;
       // set a timeout to add a delay to restart the "loop" once the above code is done
       setTimeout(letterFadeLoop, 100);

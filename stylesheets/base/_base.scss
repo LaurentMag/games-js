@@ -25,18 +25,30 @@ html {
  * Basic styles for links
  */
 a {
-  color: $brand-color;
+  color: red;
   text-decoration: none;
-
-  @include on-event {
-    color: $text-color;
-    text-decoration: underline;
-  }
 }
 
 // ---------------------------------------------------------------------------
 
-ul, li, p, h1, h2, h3, h4, img, figure, article, section, main, header, nav, footer, a, body, html {
+ul,
+li,
+p,
+h1,
+h2,
+h3,
+h4,
+img,
+figure,
+article,
+section,
+main,
+header,
+nav,
+footer,
+a,
+body,
+html {
   margin: 0;
   padding: 0;
   list-style-type: none;

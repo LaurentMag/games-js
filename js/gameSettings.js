@@ -1,23 +1,17 @@
-// animation delay (used for selected letter -for now-)
-const delay = 120;
-
-const GAME_SETTING = {
-  defaultLifeCount: 6,
-  fetchedWordsArray: [],
-  hiddenLetter: "_",
+export const SETTING = {
+  lifeCount: 6,
+  gameRemainingLife: 0,
   //
-  oneOrTwoPlayer: 1,
-  selectedWordToGuess: "",
+  fetchedStringAsArray: [],
+  hideLetter: "_",
+  // animation delay (used for selected letter -for now-)
+  animationDelay: 120,
+  //
+  playerCount: 1,
+  wordToGuess: "",
   hiddenWord: [],
   selectedLetter: "",
-  duringGameLife: 0,
+  //
+  hiddenWordLetterList: [],
+  lifeElementList: [],
 };
-
-const logInfo = () => {
-  console.log("current word : ", GAME_SETTING.selectedWordToGuess);
-  console.log("Letter sent : ", GAME_SETTING.selectedLetter);
-  console.log("life count : ", GAME_SETTING.duringGameLife);
-  console.log("-----------------------");
-};
-
-export {logInfo, GAME_SETTING, delay};

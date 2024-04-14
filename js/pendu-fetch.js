@@ -1,7 +1,7 @@
 "use strict";
 
-import {GAME_SETTING} from "./gameSettings.js";
-import {setupNewGame} from "./pendu.js";
+import SETTINGS from "./gameSettings.js";
+import {setupNewGame} from "./gameLogic.js";
 
 /**
  * Take the fetched .txt ( string ) and convert it to an Array of individual words
@@ -12,7 +12,7 @@ const toArray = (txtFetched) => {
   // set text into array
   // use regex to "split" with space (\s) coma (,) or next line (\n)
   // + mean : eventualy several
-  return (GAME_SETTING.fetchedWordsArray = txtFetched.split(/[\s,\n]+/));
+  return (SETTINGS.fetchedWordsArray = txtFetched.split(/[\s,\n]+/));
 };
 
 /**

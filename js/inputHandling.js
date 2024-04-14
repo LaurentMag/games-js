@@ -1,7 +1,7 @@
 import {gameLogic} from "./gameLogic.js";
 import {typedLetterContainer} from "./htmlElements.js";
-import {GAME_SETTING, delay} from "./gameSettings.js";
-import {animAddClass, animfadeOutFadeIn} from "./pendu-animation.js";
+import SETTINGS from "./gameSettings.js";
+import {fadeOutFadeInAnimation} from "./pendu-animation.js";
 import {sendSelectLetterToHtml} from "./utilities.js";
 
 /**
@@ -17,36 +17,34 @@ export function handleKeyInput(e) {
   // length of 1 otherwise can display "shift" / "command"... and other function keys as string
   // and with the regex only keep the first letter
   if (e.key.length === 1 && e.key.match(regex) !== null) {
-    animfadeOutFadeIn("hiddenLetter", typedLetterContainer);
+    fadeOutFadeInAnimation(typedLetterContainer);
 
-    GAME_SETTING.selectedLetter = e.key.toUpperCase();
+    SETTINGS.selectedLetter = e.key.toUpperCase();
     // add timeout to add letter for fadeOut anim part to run first
     setTimeout(() => {
-      sendSelectLetterToHtml(GAME_SETTING.selectedLetter);
-    }, delay);
+      sendSelectLetterToHtml(SETTINGS.selectedLetter);
+    }, SETTINGS.animationDelay);
   }
 
-  // ______________________________________________________________
   // when press enter to send the letter
   if (e.key === "Enter") {
-    if (GAME_SETTING.selectedLetter === "") {
+    if (SETTINGS.selectedLetter === "") {
       // check if letter is empty first ( as after each "enter" the "selectedLetter" will be reset to <emptyString>)
       console.log("Type a Letter");
     }
-    if (GAME_SETTING.selectedLetter !== "") {
+    if (SETTINGS.selectedLetter !== "") {
       // send the letter to the gamelogic ( as the letter can only be [A-Z] because regex check)
-      gameLogic(GAME_SETTING.selectedLetter);
+      gameLogic(SETTINGS.selectedLetter);
       // play hide display animation
-      animAddClass("hiddenLetter", typedLetterContainer);
+      typedLetterContainer.classList.add("letter-hidden");
     }
     // reset letter ( prevent enter spam and keep send the preview valid letter sent)
-    GAME_SETTING.selectedLetter = "";
+    SETTINGS.selectedLetter = "";
   }
 
-  // ______________________________________________________________
   // DELETED LETTER
   if (e.key == "Backspace") {
-    animAddClass("hiddenLetter", typedLetterContainer);
-    GAME_SETTING.selectedLetter = "";
+    typedLetterContainer.classList.add("letter-hidden");
+    SETTINGS.selectedLetter = "";
   }
 }
