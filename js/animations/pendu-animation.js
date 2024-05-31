@@ -1,6 +1,6 @@
 "use strict";
 
-import SETTINGS from "./gameSettings.js";
+import SETTINGS from "../settings/gameParameters.js";
 
 const hideLetterCssClass = "letter-hidden";
 const intervalTime = 55;

@@ -1,10 +1,13 @@
-import SETTINGS from "./gameSettings.js";
+import SETTINGS from "./settings/gameParameters.js";
 import {
   fadeOutFadeInThenChangeLetter,
   showNodeListElemsIntervally,
   hideNotListElemsIntervallyAndInvokeCallback,
-} from "./pendu-animation.js";
-import {clearHtmlElements, createHiddenLettersElements} from "./htmlElementsHandling.js";
+} from "./animations/pendu-animation.js";
+import {
+  clearHtmlElements,
+  createHiddenLettersElements,
+} from "./html-handling/htmlElementsHandling.js";
 import {randomIndex, createHiddenArray} from "./utilities.js";
 
 const logInfo = () => {

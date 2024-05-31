@@ -1,7 +1,7 @@
 import {gameLogic} from "./gameLogic.js";
-import {typedLetterContainer} from "./htmlElements.js";
-import SETTINGS from "./gameSettings.js";
-import {fadeOutFadeInAnimation} from "./pendu-animation.js";
+import {typedLetterContainer} from "./html-handling/htmlElements.js";
+import SETTINGS from "./settings/gameParameters.js";
+import {fadeOutFadeInAnimation} from "./animations/pendu-animation.js";
 import {sendSelectLetterToHtml} from "./utilities.js";
 
 /**

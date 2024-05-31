@@ -1,5 +1,5 @@
-import SETTINGS from "./gameSettings.js";
-import {lifeCountContainer, hiddenWordDisplayContainer} from "./htmlElements.js";
+import SETTINGS from "./settings/gameSettings.js";
+import {lifeCountContainer, hiddenWordDisplayContainer} from "./html-handling/htmlElements.js";
 
 /**
  * Generate a paragraph, append it to selected parent, and add class

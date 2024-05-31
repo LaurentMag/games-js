@@ -1,7 +1,7 @@
 "use strict";
 
-import SETTINGS from "./gameSettings.js";
-import {setupNewGame} from "./gameLogic.js";
+import SETTINGS from "../settings/gameParameters.js";
+import {setupNewGame} from "../gameLogic.js";
 
 /**
  * Take the fetched .txt ( string ) and convert it to an Array of individual words

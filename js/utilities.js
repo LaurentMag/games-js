@@ -1,5 +1,5 @@
-import SETTINGS from "./gameSettings.js";
-import {displaySelectedLetter} from "./htmlElements.js";
+import SETTINGS from "./settings/gameParameters.js";
+import {displaySelectedLetter} from "./html-handling/htmlElements.js";
 
 /**
  * Return a random index from an Array

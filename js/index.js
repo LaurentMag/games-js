@@ -1,14 +1,14 @@
 "use strict";
 
-import {fetchPenduTxt} from "./pendu-fetch.js";
+import {fetchPenduTxt} from "./services/pendu-fetch.js";
 
-import {body} from "./htmlElements.js";
+import {body} from "./html-handling/htmlElements.js";
 
-import SETTINGS from "./gameSettings.js";
+import SETTINGS from "./settings/gameSettings.js";
 
 import {handleKeyInput} from "./inputHandling.js";
 
-import {createHtmlLifeCount} from "./htmlElementsHandling.js";
+import {createHtmlLifeCount} from "./html-handling/htmlElementsHandling.js";
 
 body.addEventListener("keyup", (e) => {
   e.preventDefault();
